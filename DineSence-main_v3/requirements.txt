@@ -1,0 +1,10 @@
+streamlit
+opencv-python
+mediapipe==0.10.14
+openai==1.25.0
+numpy==2.2.6
+Pillow==11.3.0
+httpx == 0.26.0
+ultralytics
+python-dotenv
+plotly

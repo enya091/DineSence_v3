@@ -1,0 +1,1351 @@
+[
+    {
+        "label": "cv2",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "cv2",
+        "description": "cv2",
+        "detail": "cv2",
+        "documentation": {}
+    },
+    {
+        "label": "time",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "time",
+        "description": "time",
+        "detail": "time",
+        "documentation": {}
+    },
+    {
+        "label": "threading",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "threading",
+        "description": "threading",
+        "detail": "threading",
+        "documentation": {}
+    },
+    {
+        "label": "asyncio",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "asyncio",
+        "description": "asyncio",
+        "detail": "asyncio",
+        "documentation": {}
+    },
+    {
+        "label": "Queue",
+        "importPath": "queue",
+        "description": "queue",
+        "isExtraImport": true,
+        "detail": "queue",
+        "documentation": {}
+    },
+    {
+        "label": "Empty",
+        "importPath": "queue",
+        "description": "queue",
+        "isExtraImport": true,
+        "detail": "queue",
+        "documentation": {}
+    },
+    {
+        "label": "Full",
+        "importPath": "queue",
+        "description": "queue",
+        "isExtraImport": true,
+        "detail": "queue",
+        "documentation": {}
+    },
+    {
+        "label": "numpy",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "numpy",
+        "description": "numpy",
+        "detail": "numpy",
+        "documentation": {}
+    },
+    {
+        "label": "HeadGestureDetector",
+        "importPath": "services.vision_analysis",
+        "description": "services.vision_analysis",
+        "isExtraImport": true,
+        "detail": "services.vision_analysis",
+        "documentation": {}
+    },
+    {
+        "label": "crop_face_with_mediapipe",
+        "importPath": "services.vision_analysis",
+        "description": "services.vision_analysis",
+        "isExtraImport": true,
+        "detail": "services.vision_analysis",
+        "documentation": {}
+    },
+    {
+        "label": "estimate_plate_leftover",
+        "importPath": "services.vision_analysis",
+        "description": "services.vision_analysis",
+        "isExtraImport": true,
+        "detail": "services.vision_analysis",
+        "documentation": {}
+    },
+    {
+        "label": "llm_handler",
+        "importPath": "services",
+        "description": "services",
+        "isExtraImport": true,
+        "detail": "services",
+        "documentation": {}
+    },
+    {
+        "label": "database",
+        "importPath": "services",
+        "description": "services",
+        "isExtraImport": true,
+        "detail": "services",
+        "documentation": {}
+    },
+    {
+        "label": "llm_handler",
+        "importPath": "services",
+        "description": "services",
+        "isExtraImport": true,
+        "detail": "services",
+        "documentation": {}
+    },
+    {
+        "label": "llm_handler",
+        "importPath": "services",
+        "description": "services",
+        "isExtraImport": true,
+        "detail": "services",
+        "documentation": {}
+    },
+    {
+        "label": "database",
+        "importPath": "services",
+        "description": "services",
+        "isExtraImport": true,
+        "detail": "services",
+        "documentation": {}
+    },
+    {
+        "label": "vision_analysis",
+        "importPath": "services",
+        "description": "services",
+        "isExtraImport": true,
+        "detail": "services",
+        "documentation": {}
+    },
+    {
+        "label": "llm_handler",
+        "importPath": "services",
+        "description": "services",
+        "isExtraImport": true,
+        "detail": "services",
+        "documentation": {}
+    },
+    {
+        "label": "llm_handler",
+        "importPath": "services",
+        "description": "services",
+        "isExtraImport": true,
+        "detail": "services",
+        "documentation": {}
+    },
+    {
+        "label": "vision_analysis",
+        "importPath": "services",
+        "description": "services",
+        "isExtraImport": true,
+        "detail": "services",
+        "documentation": {}
+    },
+    {
+        "label": "database",
+        "importPath": "services",
+        "description": "services",
+        "isExtraImport": true,
+        "detail": "services",
+        "documentation": {}
+    },
+    {
+        "label": "config",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "config",
+        "description": "config",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "EMOTE_INTERVAL_SECONDS",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "CAMERA_RESOLUTION_WIDTH",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "CAMERA_RESOLUTION_HEIGHT",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "CAMERA_BUFFER_SIZE",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "dataclass",
+        "importPath": "dataclasses",
+        "description": "dataclasses",
+        "isExtraImport": true,
+        "detail": "dataclasses",
+        "documentation": {}
+    },
+    {
+        "label": "field",
+        "importPath": "dataclasses",
+        "description": "dataclasses",
+        "isExtraImport": true,
+        "detail": "dataclasses",
+        "documentation": {}
+    },
+    {
+        "label": "dataclass",
+        "importPath": "dataclasses",
+        "description": "dataclasses",
+        "isExtraImport": true,
+        "detail": "dataclasses",
+        "documentation": {}
+    },
+    {
+        "label": "dataclass",
+        "importPath": "dataclasses",
+        "description": "dataclasses",
+        "isExtraImport": true,
+        "detail": "dataclasses",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Dict",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Any",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Iterable",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Dict",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Any",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Dict",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Any",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Tuple",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "annotations",
+        "importPath": "__future__",
+        "description": "__future__",
+        "isExtraImport": true,
+        "detail": "__future__",
+        "documentation": {}
+    },
+    {
+        "label": "annotations",
+        "importPath": "__future__",
+        "description": "__future__",
+        "isExtraImport": true,
+        "detail": "__future__",
+        "documentation": {}
+    },
+    {
+        "label": "defaultdict",
+        "importPath": "collections",
+        "description": "collections",
+        "isExtraImport": true,
+        "detail": "collections",
+        "documentation": {}
+    },
+    {
+        "label": "deque",
+        "importPath": "collections",
+        "description": "collections",
+        "isExtraImport": true,
+        "detail": "collections",
+        "documentation": {}
+    },
+    {
+        "label": "deque",
+        "importPath": "collections",
+        "description": "collections",
+        "isExtraImport": true,
+        "detail": "collections",
+        "documentation": {}
+    },
+    {
+        "label": "deque",
+        "importPath": "collections",
+        "description": "collections",
+        "isExtraImport": true,
+        "detail": "collections",
+        "documentation": {}
+    },
+    {
+        "label": "deque",
+        "importPath": "collections",
+        "description": "collections",
+        "isExtraImport": true,
+        "detail": "collections",
+        "documentation": {}
+    },
+    {
+        "label": "Counter",
+        "importPath": "collections",
+        "description": "collections",
+        "isExtraImport": true,
+        "detail": "collections",
+        "documentation": {}
+    },
+    {
+        "label": "Counter",
+        "importPath": "collections",
+        "description": "collections",
+        "isExtraImport": true,
+        "detail": "collections",
+        "documentation": {}
+    },
+    {
+        "label": "Counter",
+        "importPath": "collections",
+        "description": "collections",
+        "isExtraImport": true,
+        "detail": "collections",
+        "documentation": {}
+    },
+    {
+        "label": "pandas",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "pandas",
+        "description": "pandas",
+        "detail": "pandas",
+        "documentation": {}
+    },
+    {
+        "label": "sqlite3",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "sqlite3",
+        "description": "sqlite3",
+        "detail": "sqlite3",
+        "documentation": {}
+    },
+    {
+        "label": "json",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "json",
+        "description": "json",
+        "detail": "json",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "base64",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "base64",
+        "description": "base64",
+        "detail": "base64",
+        "documentation": {}
+    },
+    {
+        "label": "io",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "io",
+        "description": "io",
+        "detail": "io",
+        "documentation": {}
+    },
+    {
+        "label": "httpx",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "httpx",
+        "description": "httpx",
+        "detail": "httpx",
+        "documentation": {}
+    },
+    {
+        "label": "AsyncOpenAI",
+        "importPath": "openai",
+        "description": "openai",
+        "isExtraImport": true,
+        "detail": "openai",
+        "documentation": {}
+    },
+    {
+        "label": "ChatCompletion",
+        "importPath": "openai.types.chat",
+        "description": "openai.types.chat",
+        "isExtraImport": true,
+        "detail": "openai.types.chat",
+        "documentation": {}
+    },
+    {
+        "label": "Image",
+        "importPath": "PIL",
+        "description": "PIL",
+        "isExtraImport": true,
+        "detail": "PIL",
+        "documentation": {}
+    },
+    {
+        "label": "load_prompt_template",
+        "importPath": "utils.prompt_loader",
+        "description": "utils.prompt_loader",
+        "isExtraImport": true,
+        "detail": "utils.prompt_loader",
+        "documentation": {}
+    },
+    {
+        "label": "mediapipe",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "mediapipe",
+        "description": "mediapipe",
+        "detail": "mediapipe",
+        "documentation": {}
+    },
+    {
+        "label": "YOLO",
+        "importPath": "ultralytics",
+        "description": "ultralytics",
+        "isExtraImport": true,
+        "detail": "ultralytics",
+        "documentation": {}
+    },
+    {
+        "label": "streamlit",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "streamlit",
+        "description": "streamlit",
+        "detail": "streamlit",
+        "documentation": {}
+    },
+    {
+        "label": "plotly.express",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "plotly.express",
+        "description": "plotly.express",
+        "detail": "plotly.express",
+        "documentation": {}
+    },
+    {
+        "label": "LiveAnalyzer",
+        "importPath": "core.live_analyzer",
+        "description": "core.live_analyzer",
+        "isExtraImport": true,
+        "detail": "core.live_analyzer",
+        "documentation": {}
+    },
+    {
+        "label": "AnalysisResult",
+        "importPath": "core.types",
+        "description": "core.types",
+        "isExtraImport": true,
+        "detail": "core.types",
+        "documentation": {}
+    },
+    {
+        "label": "os",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "os",
+        "description": "os",
+        "detail": "os",
+        "documentation": {}
+    },
+    {
+        "label": "lru_cache",
+        "importPath": "functools",
+        "description": "functools",
+        "isExtraImport": true,
+        "detail": "functools",
+        "documentation": {}
+    },
+    {
+        "label": "BodyEmotionDetector",
+        "importPath": "services.detectors",
+        "description": "services.detectors",
+        "isExtraImport": true,
+        "detail": "services.detectors",
+        "documentation": {}
+    },
+    {
+        "label": "EmotionSatisfactionAnalyzer",
+        "importPath": "services.analyzer",
+        "description": "services.analyzer",
+        "isExtraImport": true,
+        "detail": "services.analyzer",
+        "documentation": {}
+    },
+    {
+        "label": "live_view",
+        "importPath": "ui",
+        "description": "ui",
+        "isExtraImport": true,
+        "detail": "ui",
+        "documentation": {}
+    },
+    {
+        "label": "video_view",
+        "importPath": "ui",
+        "description": "ui",
+        "isExtraImport": true,
+        "detail": "ui",
+        "documentation": {}
+    },
+    {
+        "label": "dashboard_view",
+        "importPath": "ui",
+        "description": "ui",
+        "isExtraImport": true,
+        "detail": "ui",
+        "documentation": {}
+    },
+    {
+        "label": "login_view",
+        "importPath": "ui",
+        "description": "ui",
+        "isExtraImport": true,
+        "detail": "ui",
+        "documentation": {}
+    },
+    {
+        "label": "state_manager",
+        "importPath": "utils",
+        "description": "utils",
+        "isExtraImport": true,
+        "detail": "utils",
+        "documentation": {}
+    },
+    {
+        "label": "load_dotenv",
+        "importPath": "dotenv",
+        "description": "dotenv",
+        "isExtraImport": true,
+        "detail": "dotenv",
+        "documentation": {}
+    },
+    {
+        "label": "LiveAnalyzer",
+        "kind": 6,
+        "importPath": "core.live_analyzer",
+        "description": "core.live_analyzer",
+        "peekOfCode": "class LiveAnalyzer:\n    def __init__(self, model_pack: dict, menu_items: list, analysis_options: dict):\n        self.model_pack = model_pack\n        self.menu_items = menu_items\n        self.analysis_options = analysis_options\n        self._frame_display_queue = Queue(maxsize=1)\n        self._frame_analysis_queue = Queue(maxsize=1)\n        self._analysis_result_queue = Queue(maxsize=1)\n        self.gesture_detector = HeadGestureDetector()\n        self._stop_event = threading.Event()",
+        "detail": "core.live_analyzer",
+        "documentation": {}
+    },
+    {
+        "label": "VLM_INTERVAL_SECONDS",
+        "kind": 5,
+        "importPath": "core.live_analyzer",
+        "description": "core.live_analyzer",
+        "peekOfCode": "VLM_INTERVAL_SECONDS = 10.0\nclass LiveAnalyzer:\n    def __init__(self, model_pack: dict, menu_items: list, analysis_options: dict):\n        self.model_pack = model_pack\n        self.menu_items = menu_items\n        self.analysis_options = analysis_options\n        self._frame_display_queue = Queue(maxsize=1)\n        self._frame_analysis_queue = Queue(maxsize=1)\n        self._analysis_result_queue = Queue(maxsize=1)\n        self.gesture_detector = HeadGestureDetector()",
+        "detail": "core.live_analyzer",
+        "documentation": {}
+    },
+    {
+        "label": "AnalysisResult",
+        "kind": 6,
+        "importPath": "core.types",
+        "description": "core.types",
+        "peekOfCode": "class AnalysisResult:\n    \"\"\"\n    【新版】用於存放單次背景分析結果的「純數據」結構。\n    這個物件不包含影像，只包含分析出的事件和資訊，\n    會在背景的分析執行緒和主執行緒之間傳遞。\n    \"\"\"\n    # --- 分析出的「事件」(Event) ---\n    # 這些是用於觸發主執行緒中計數器更新的信號\n    nod_event: bool = False\n    emotion_event: str = \"\"",
+        "detail": "core.types",
+        "documentation": {}
+    },
+    {
+        "label": "StatPoint",
+        "kind": 6,
+        "importPath": "services.analyzer",
+        "description": "services.analyzer",
+        "peekOfCode": "class StatPoint:\n    ts_bin: int\n    zone: str\n    pos: int\n    neu: int\n    neg: int\n    score_sum: float\n    events: int\nclass EmotionSatisfactionAnalyzer:\n    def __init__(self, rolling_sec:int=ROLLING_SEC):",
+        "detail": "services.analyzer",
+        "documentation": {}
+    },
+    {
+        "label": "EmotionSatisfactionAnalyzer",
+        "kind": 6,
+        "importPath": "services.analyzer",
+        "description": "services.analyzer",
+        "peekOfCode": "class EmotionSatisfactionAnalyzer:\n    def __init__(self, rolling_sec:int=ROLLING_SEC):\n        self.rolling_sec = rolling_sec\n        self.buffer = deque()\n        self.grid = defaultdict(lambda: defaultdict(lambda: StatPoint(0, ZONE_DEFAULT, 0,0,0,0.0,0)))\n    @staticmethod\n    def _bucket(score: float) -> str:\n        if score > 0.2: return \"pos\"\n        if score < -0.2: return \"neg\"\n        return \"neu\"",
+        "detail": "services.analyzer",
+        "documentation": {}
+    },
+    {
+        "label": "to_bin",
+        "kind": 2,
+        "importPath": "services.analyzer",
+        "description": "services.analyzer",
+        "peekOfCode": "def to_bin(ts: float, bin_sec: int = TIME_BIN_SEC) -> int:\n    return int(ts // bin_sec) * bin_sec\n@dataclass\nclass StatPoint:\n    ts_bin: int\n    zone: str\n    pos: int\n    neu: int\n    neg: int\n    score_sum: float",
+        "detail": "services.analyzer",
+        "documentation": {}
+    },
+    {
+        "label": "ROLLING_SEC",
+        "kind": 5,
+        "importPath": "services.analyzer",
+        "description": "services.analyzer",
+        "peekOfCode": "ROLLING_SEC = 60\nTIME_BIN_SEC = 300\nZONE_DEFAULT = \"unknown\"\nEVENT_SCORE = {\n    \"smile\": +1.0,\n    \"nod\": +0.8,\n    \"lean_forward\": +0.3,\n    \"hand_raise\": 0.0,\n    \"neutral\": 0.0,\n    \"shake\": -0.8,",
+        "detail": "services.analyzer",
+        "documentation": {}
+    },
+    {
+        "label": "TIME_BIN_SEC",
+        "kind": 5,
+        "importPath": "services.analyzer",
+        "description": "services.analyzer",
+        "peekOfCode": "TIME_BIN_SEC = 300\nZONE_DEFAULT = \"unknown\"\nEVENT_SCORE = {\n    \"smile\": +1.0,\n    \"nod\": +0.8,\n    \"lean_forward\": +0.3,\n    \"hand_raise\": 0.0,\n    \"neutral\": 0.0,\n    \"shake\": -0.8,\n    \"frown\": -0.8,",
+        "detail": "services.analyzer",
+        "documentation": {}
+    },
+    {
+        "label": "ZONE_DEFAULT",
+        "kind": 5,
+        "importPath": "services.analyzer",
+        "description": "services.analyzer",
+        "peekOfCode": "ZONE_DEFAULT = \"unknown\"\nEVENT_SCORE = {\n    \"smile\": +1.0,\n    \"nod\": +0.8,\n    \"lean_forward\": +0.3,\n    \"hand_raise\": 0.0,\n    \"neutral\": 0.0,\n    \"shake\": -0.8,\n    \"frown\": -0.8,\n    \"lean_back\": -0.3,",
+        "detail": "services.analyzer",
+        "documentation": {}
+    },
+    {
+        "label": "EVENT_SCORE",
+        "kind": 5,
+        "importPath": "services.analyzer",
+        "description": "services.analyzer",
+        "peekOfCode": "EVENT_SCORE = {\n    \"smile\": +1.0,\n    \"nod\": +0.8,\n    \"lean_forward\": +0.3,\n    \"hand_raise\": 0.0,\n    \"neutral\": 0.0,\n    \"shake\": -0.8,\n    \"frown\": -0.8,\n    \"lean_back\": -0.3,\n    \"dislike\": -1.0,",
+        "detail": "services.analyzer",
+        "documentation": {}
+    },
+    {
+        "label": "init_db",
+        "kind": 2,
+        "importPath": "services.database",
+        "description": "services.database",
+        "peekOfCode": "def init_db():\n    \"\"\"初始化資料庫，建立表格\"\"\"\n    conn = sqlite3.connect(DB_NAME)\n    c = conn.cursor()\n    # 建立分析紀錄表\n    # 包含：時間、模式(行為/餐盤)、統計數據(JSON格式)、AI洞察\n    c.execute('''\n        CREATE TABLE IF NOT EXISTS analysis_records (\n            id INTEGER PRIMARY KEY AUTOINCREMENT,\n            timestamp TEXT,",
+        "detail": "services.database",
+        "documentation": {}
+    },
+    {
+        "label": "save_session",
+        "kind": 2,
+        "importPath": "services.database",
+        "description": "services.database",
+        "peekOfCode": "def save_session(mode, duration, nod, shake, emotion_dict, leftover_dict, insight):\n    \"\"\"儲存一次分析 Session 的結果\"\"\"\n    conn = sqlite3.connect(DB_NAME)\n    c = conn.cursor()\n    # 將字典轉為 JSON 字串儲存\n    emotion_json = json.dumps(emotion_dict, ensure_ascii=False)\n    leftover_json = json.dumps(leftover_dict, ensure_ascii=False)\n    timestamp = datetime.now().strftime(\"%Y-%m-%d %H:%M:%S\")\n    c.execute('''\n        INSERT INTO analysis_records ",
+        "detail": "services.database",
+        "documentation": {}
+    },
+    {
+        "label": "load_all_data",
+        "kind": 2,
+        "importPath": "services.database",
+        "description": "services.database",
+        "peekOfCode": "def load_all_data():\n    \"\"\"讀取所有資料，回傳 Pandas DataFrame\"\"\"\n    conn = sqlite3.connect(DB_NAME)\n    # 直接讀成 DataFrame 方便分析\n    df = pd.read_sql_query(\"SELECT * FROM analysis_records ORDER BY timestamp DESC\", conn)\n    conn.close()\n    return df",
+        "detail": "services.database",
+        "documentation": {}
+    },
+    {
+        "label": "DB_NAME",
+        "kind": 5,
+        "importPath": "services.database",
+        "description": "services.database",
+        "peekOfCode": "DB_NAME = \"dinesence.db\"\ndef init_db():\n    \"\"\"初始化資料庫，建立表格\"\"\"\n    conn = sqlite3.connect(DB_NAME)\n    c = conn.cursor()\n    # 建立分析紀錄表\n    # 包含：時間、模式(行為/餐盤)、統計數據(JSON格式)、AI洞察\n    c.execute('''\n        CREATE TABLE IF NOT EXISTS analysis_records (\n            id INTEGER PRIMARY KEY AUTOINCREMENT,",
+        "detail": "services.database",
+        "documentation": {}
+    },
+    {
+        "label": "BehaviorEvent",
+        "kind": 6,
+        "importPath": "services.detectors",
+        "description": "services.detectors",
+        "peekOfCode": "class BehaviorEvent:\n    ts: float\n    event_type: str\n    subject_id: Optional[int]\n    zone: Optional[str]\n    score: Optional[float]\n    meta: Optional[Dict[str, Any]] = None\n# --------------------------------------------------\n#  New: Unified Head Gesture Detector\n# --------------------------------------------------",
+        "detail": "services.detectors",
+        "documentation": {}
+    },
+    {
+        "label": "HeadGestureDetector",
+        "kind": 6,
+        "importPath": "services.detectors",
+        "description": "services.detectors",
+        "peekOfCode": "class HeadGestureDetector:\n    \"\"\"\n    嚴格版頭部動作偵測 (取代原本分開的 Nod/Shake 偵測器)\n    同時監控 X 與 Y 軸，確保動作單純才觸發。\n    \"\"\"\n    def __init__(\n        self,\n        buf_len=GESTURE_BUFFER_LEN,\n        nod_amp_thresh=NOD_AMP_THRESH,\n        shake_amp_thresh=SHAKE_AMP_THRESH,",
+        "detail": "services.detectors",
+        "documentation": {}
+    },
+    {
+        "label": "PostureClassifier",
+        "kind": 6,
+        "importPath": "services.detectors",
+        "description": "services.detectors",
+        "peekOfCode": "class PostureClassifier:\n    def __init__(self, fwd_deg:float=LEAN_FWD_TORSO_DEG, back_deg:float=LEAN_BACK_TORSO_DEG):\n        self.fwd_deg = fwd_deg\n        self.back_deg = back_deg\n    @staticmethod\n    def _deg(a, b):\n        a = np.array(a, dtype=np.float32); b = np.array(b, dtype=np.float32)\n        dot = float(np.dot(a,b)); na = np.linalg.norm(a); nb = np.linalg.norm(b)\n        if na == 0 or nb == 0: return 0.0\n        cosv = np.clip(dot/(na*nb), -1.0, 1.0)",
+        "detail": "services.detectors",
+        "documentation": {}
+    },
+    {
+        "label": "HandRaiseDetector",
+        "kind": 6,
+        "importPath": "services.detectors",
+        "description": "services.detectors",
+        "peekOfCode": "class HandRaiseDetector:\n    # 這裡現在可以正確抓到全域的 COOLDOWN_SECONDS 了\n    def __init__(self, margin:int=HAND_RAISE_MARGIN, cooldown:float=COOLDOWN_SECONDS):\n        self.margin = margin\n        self.last_ts = 0.0\n        self.cooldown = cooldown\n    def update_and_check(self, landmarks, img_h:int, img_w:int):\n        LWR, RWR, LSH, RSH = 15,16,11,12\n        try:\n            lw_y = landmarks[LWR].y * img_h; rw_y = landmarks[RWR].y * img_h",
+        "detail": "services.detectors",
+        "documentation": {}
+    },
+    {
+        "label": "ExpressionEstimator",
+        "kind": 6,
+        "importPath": "services.detectors",
+        "description": "services.detectors",
+        "peekOfCode": "class ExpressionEstimator:\n    def __init__(self, external_clf=None, use_heuristic:bool=True):\n        self.external = external_clf; self.use_heur = use_heuristic\n    def predict(self, face_bgr, facemesh_landmarks=None):\n        if self.external is not None:\n            return self.external.predict(face_bgr)\n        # fallback heuristic\n        return {\"label\":\"neutral\",\"score\":0.5}\n# --------------------------------------------------\n#  Main Aggregator Class",
+        "detail": "services.detectors",
+        "documentation": {}
+    },
+    {
+        "label": "BodyEmotionDetector",
+        "kind": 6,
+        "importPath": "services.detectors",
+        "description": "services.detectors",
+        "peekOfCode": "class BodyEmotionDetector:\n    def __init__(self):\n        # [Updated] Use the single HeadGestureDetector instead of separate ones\n        self.head_gesture = HeadGestureDetector()\n        self.posture = PostureClassifier()\n        self.hand_raise = HandRaiseDetector()\n        self.expr = ExpressionEstimator()\n    def process_frame(self, frame_bgr, *, face_detector, pose_landmarks=None,\n                      nose_xy: Optional[Tuple[float,float]]=None, ears_xy: Optional[Tuple[Tuple[float,float],Tuple[float,float]]]=None,\n                      zone: Optional[str]=None, face_mesh_points: Optional[dict]=None, subject_id: Optional[int]=None):",
+        "detail": "services.detectors",
+        "documentation": {}
+    },
+    {
+        "label": "crop_face_with_mediapipe",
+        "kind": 2,
+        "importPath": "services.detectors",
+        "description": "services.detectors",
+        "peekOfCode": "def crop_face_with_mediapipe(bgr_frame, detector, min_conf:float=MIN_FACE_CONF):\n    rgb = cv2.cvtColor(bgr_frame, cv2.COLOR_BGR2RGB)\n    res = detector.process(rgb)\n    if not res.detections:\n        return None, None\n    det = res.detections[0]\n    score = det.score[0] if hasattr(det, \"score\") else getattr(det, \"confidence\", 0.0)\n    if score < min_conf:\n        return None, None\n    h, w = bgr_frame.shape[:2]",
+        "detail": "services.detectors",
+        "documentation": {}
+    },
+    {
+        "label": "COOLDOWN_SECONDS",
+        "kind": 5,
+        "importPath": "services.detectors",
+        "description": "services.detectors",
+        "peekOfCode": "COOLDOWN_SECONDS = 0.8        # 原本 1.0 -> 改短一點，測試比較方便\n# 頭部動作偵測參數\nGESTURE_BUFFER_LEN = 20\n# ★★★ 關鍵修改區 ★★★\nNOD_AMP_THRESH = 0.008        # 原本 0.015 -> 改 0.008 (讓小幅度點頭也能觸發)\nSHAKE_AMP_THRESH = 0.010      # 原本 0.020 -> 改 0.010\nMAX_SECONDARY_AMP = 0.020     # 原本 0.010 -> 改 0.020 (這是重點！容許頭部不自覺的左右晃動)\nMIN_OSC_COUNT = 2             # 原本 3 -> 改 2 (來回一次就觸發)\nGESTURE_COOLDOWN = 0.8\nGESTURE_MIN_OFFSET = 0.002",
+        "detail": "services.detectors",
+        "documentation": {}
+    },
+    {
+        "label": "GESTURE_BUFFER_LEN",
+        "kind": 5,
+        "importPath": "services.detectors",
+        "description": "services.detectors",
+        "peekOfCode": "GESTURE_BUFFER_LEN = 20\n# ★★★ 關鍵修改區 ★★★\nNOD_AMP_THRESH = 0.008        # 原本 0.015 -> 改 0.008 (讓小幅度點頭也能觸發)\nSHAKE_AMP_THRESH = 0.010      # 原本 0.020 -> 改 0.010\nMAX_SECONDARY_AMP = 0.020     # 原本 0.010 -> 改 0.020 (這是重點！容許頭部不自覺的左右晃動)\nMIN_OSC_COUNT = 2             # 原本 3 -> 改 2 (來回一次就觸發)\nGESTURE_COOLDOWN = 0.8\nGESTURE_MIN_OFFSET = 0.002\n# 其他偵測參數\nHAND_RAISE_MARGIN = 30",
+        "detail": "services.detectors",
+        "documentation": {}
+    },
+    {
+        "label": "NOD_AMP_THRESH",
+        "kind": 5,
+        "importPath": "services.detectors",
+        "description": "services.detectors",
+        "peekOfCode": "NOD_AMP_THRESH = 0.008        # 原本 0.015 -> 改 0.008 (讓小幅度點頭也能觸發)\nSHAKE_AMP_THRESH = 0.010      # 原本 0.020 -> 改 0.010\nMAX_SECONDARY_AMP = 0.020     # 原本 0.010 -> 改 0.020 (這是重點！容許頭部不自覺的左右晃動)\nMIN_OSC_COUNT = 2             # 原本 3 -> 改 2 (來回一次就觸發)\nGESTURE_COOLDOWN = 0.8\nGESTURE_MIN_OFFSET = 0.002\n# 其他偵測參數\nHAND_RAISE_MARGIN = 30\nLEAN_FWD_TORSO_DEG = 12\nLEAN_BACK_TORSO_DEG = -8",
+        "detail": "services.detectors",
+        "documentation": {}
+    },
+    {
+        "label": "SHAKE_AMP_THRESH",
+        "kind": 5,
+        "importPath": "services.detectors",
+        "description": "services.detectors",
+        "peekOfCode": "SHAKE_AMP_THRESH = 0.010      # 原本 0.020 -> 改 0.010\nMAX_SECONDARY_AMP = 0.020     # 原本 0.010 -> 改 0.020 (這是重點！容許頭部不自覺的左右晃動)\nMIN_OSC_COUNT = 2             # 原本 3 -> 改 2 (來回一次就觸發)\nGESTURE_COOLDOWN = 0.8\nGESTURE_MIN_OFFSET = 0.002\n# 其他偵測參數\nHAND_RAISE_MARGIN = 30\nLEAN_FWD_TORSO_DEG = 12\nLEAN_BACK_TORSO_DEG = -8\nMIN_FACE_CONF = 0.6",
+        "detail": "services.detectors",
+        "documentation": {}
+    },
+    {
+        "label": "MAX_SECONDARY_AMP",
+        "kind": 5,
+        "importPath": "services.detectors",
+        "description": "services.detectors",
+        "peekOfCode": "MAX_SECONDARY_AMP = 0.020     # 原本 0.010 -> 改 0.020 (這是重點！容許頭部不自覺的左右晃動)\nMIN_OSC_COUNT = 2             # 原本 3 -> 改 2 (來回一次就觸發)\nGESTURE_COOLDOWN = 0.8\nGESTURE_MIN_OFFSET = 0.002\n# 其他偵測參數\nHAND_RAISE_MARGIN = 30\nLEAN_FWD_TORSO_DEG = 12\nLEAN_BACK_TORSO_DEG = -8\nMIN_FACE_CONF = 0.6\n@dataclass",
+        "detail": "services.detectors",
+        "documentation": {}
+    },
+    {
+        "label": "MIN_OSC_COUNT",
+        "kind": 5,
+        "importPath": "services.detectors",
+        "description": "services.detectors",
+        "peekOfCode": "MIN_OSC_COUNT = 2             # 原本 3 -> 改 2 (來回一次就觸發)\nGESTURE_COOLDOWN = 0.8\nGESTURE_MIN_OFFSET = 0.002\n# 其他偵測參數\nHAND_RAISE_MARGIN = 30\nLEAN_FWD_TORSO_DEG = 12\nLEAN_BACK_TORSO_DEG = -8\nMIN_FACE_CONF = 0.6\n@dataclass\nclass BehaviorEvent:",
+        "detail": "services.detectors",
+        "documentation": {}
+    },
+    {
+        "label": "GESTURE_COOLDOWN",
+        "kind": 5,
+        "importPath": "services.detectors",
+        "description": "services.detectors",
+        "peekOfCode": "GESTURE_COOLDOWN = 0.8\nGESTURE_MIN_OFFSET = 0.002\n# 其他偵測參數\nHAND_RAISE_MARGIN = 30\nLEAN_FWD_TORSO_DEG = 12\nLEAN_BACK_TORSO_DEG = -8\nMIN_FACE_CONF = 0.6\n@dataclass\nclass BehaviorEvent:\n    ts: float",
+        "detail": "services.detectors",
+        "documentation": {}
+    },
+    {
+        "label": "GESTURE_MIN_OFFSET",
+        "kind": 5,
+        "importPath": "services.detectors",
+        "description": "services.detectors",
+        "peekOfCode": "GESTURE_MIN_OFFSET = 0.002\n# 其他偵測參數\nHAND_RAISE_MARGIN = 30\nLEAN_FWD_TORSO_DEG = 12\nLEAN_BACK_TORSO_DEG = -8\nMIN_FACE_CONF = 0.6\n@dataclass\nclass BehaviorEvent:\n    ts: float\n    event_type: str",
+        "detail": "services.detectors",
+        "documentation": {}
+    },
+    {
+        "label": "HAND_RAISE_MARGIN",
+        "kind": 5,
+        "importPath": "services.detectors",
+        "description": "services.detectors",
+        "peekOfCode": "HAND_RAISE_MARGIN = 30\nLEAN_FWD_TORSO_DEG = 12\nLEAN_BACK_TORSO_DEG = -8\nMIN_FACE_CONF = 0.6\n@dataclass\nclass BehaviorEvent:\n    ts: float\n    event_type: str\n    subject_id: Optional[int]\n    zone: Optional[str]",
+        "detail": "services.detectors",
+        "documentation": {}
+    },
+    {
+        "label": "LEAN_FWD_TORSO_DEG",
+        "kind": 5,
+        "importPath": "services.detectors",
+        "description": "services.detectors",
+        "peekOfCode": "LEAN_FWD_TORSO_DEG = 12\nLEAN_BACK_TORSO_DEG = -8\nMIN_FACE_CONF = 0.6\n@dataclass\nclass BehaviorEvent:\n    ts: float\n    event_type: str\n    subject_id: Optional[int]\n    zone: Optional[str]\n    score: Optional[float]",
+        "detail": "services.detectors",
+        "documentation": {}
+    },
+    {
+        "label": "LEAN_BACK_TORSO_DEG",
+        "kind": 5,
+        "importPath": "services.detectors",
+        "description": "services.detectors",
+        "peekOfCode": "LEAN_BACK_TORSO_DEG = -8\nMIN_FACE_CONF = 0.6\n@dataclass\nclass BehaviorEvent:\n    ts: float\n    event_type: str\n    subject_id: Optional[int]\n    zone: Optional[str]\n    score: Optional[float]\n    meta: Optional[Dict[str, Any]] = None",
+        "detail": "services.detectors",
+        "documentation": {}
+    },
+    {
+        "label": "MIN_FACE_CONF",
+        "kind": 5,
+        "importPath": "services.detectors",
+        "description": "services.detectors",
+        "peekOfCode": "MIN_FACE_CONF = 0.6\n@dataclass\nclass BehaviorEvent:\n    ts: float\n    event_type: str\n    subject_id: Optional[int]\n    zone: Optional[str]\n    score: Optional[float]\n    meta: Optional[Dict[str, Any]] = None\n# --------------------------------------------------",
+        "detail": "services.detectors",
+        "documentation": {}
+    },
+    {
+        "label": "get_openai_client",
+        "kind": 2,
+        "importPath": "services.llm_handler",
+        "description": "services.llm_handler",
+        "peekOfCode": "def get_openai_client(api_key):\n    \"\"\"根據 API Key 初始化並返回異步的 OpenAI 客戶端物件。\"\"\"\n    if not api_key:\n        return None\n    try:\n        return AsyncOpenAI(api_key=api_key)\n    except Exception as e:\n        print(f\"初始化 OpenAI Client 失敗: {e}\")\n        return None\ndef _image_to_base64(pil_image):",
+        "detail": "services.llm_handler",
+        "documentation": {}
+    },
+    {
+        "label": "aclient",
+        "kind": 5,
+        "importPath": "services.llm_handler",
+        "description": "services.llm_handler",
+        "peekOfCode": "aclient = httpx.AsyncClient()\ndef get_openai_client(api_key):\n    \"\"\"根據 API Key 初始化並返回異步的 OpenAI 客戶端物件。\"\"\"\n    if not api_key:\n        return None\n    try:\n        return AsyncOpenAI(api_key=api_key)\n    except Exception as e:\n        print(f\"初始化 OpenAI Client 失敗: {e}\")\n        return None",
+        "detail": "services.llm_handler",
+        "documentation": {}
+    },
+    {
+        "label": "HeadGestureDetectorStrict",
+        "kind": 6,
+        "importPath": "services.nod_test",
+        "description": "services.nod_test",
+        "peekOfCode": "class HeadGestureDetectorStrict:\n    \"\"\"\n    嚴格版頭部動作偵測：\n    - 同時看 X / Y 相對位移的波形\n    - 點頭：Y 振幅夠大，而且 X 幾乎沒動\n    - 搖頭：X 振幅夠大，而且 Y 幾乎沒動\n    - 只要兩邊一起動得很大，就當「模糊動作」→ 不判\n    \"\"\"\n    def __init__(\n        self,",
+        "detail": "services.nod_test",
+        "documentation": {}
+    },
+    {
+        "label": "main",
+        "kind": 2,
+        "importPath": "services.nod_test",
+        "description": "services.nod_test",
+        "peekOfCode": "def main():\n    mp_pose = mp.solutions.pose\n    pose = mp_pose.Pose(\n        model_complexity=0,\n        enable_segmentation=False,\n        min_detection_confidence=0.5,\n        min_tracking_confidence=0.5,\n    )\n    cap = cv2.VideoCapture(0)\n    if not cap.isOpened():",
+        "detail": "services.nod_test",
+        "documentation": {}
+    },
+    {
+        "label": "HeadGestureDetector",
+        "kind": 6,
+        "importPath": "services.vision_analysis",
+        "description": "services.vision_analysis",
+        "peekOfCode": "class HeadGestureDetector:\n    \"\"\"\n    嚴格版頭部動作偵測：\n    - 同時看 X / Y 相對位移的波形\n    - 點頭：Y 振幅夠大，而且 X 幾乎沒動\n    - 搖頭：X 振幅夠大，而且 Y 幾乎沒動\n    \"\"\"\n    def __init__(\n        self,\n        buf_len=GESTURE_BUFFER_LEN,",
+        "detail": "services.vision_analysis",
+        "documentation": {}
+    },
+    {
+        "label": "get_pose_detector",
+        "kind": 2,
+        "importPath": "services.vision_analysis",
+        "description": "services.vision_analysis",
+        "peekOfCode": "def get_pose_detector():\n    return mp_pose.Pose(\n        model_complexity=0,\n        enable_segmentation=False,\n        min_detection_confidence=0.5,\n        min_tracking_confidence=0.5,\n    )\ndef get_face_detector():\n    return mp_face.FaceDetection(\n        model_selection=0,",
+        "detail": "services.vision_analysis",
+        "documentation": {}
+    },
+    {
+        "label": "get_face_detector",
+        "kind": 2,
+        "importPath": "services.vision_analysis",
+        "description": "services.vision_analysis",
+        "peekOfCode": "def get_face_detector():\n    return mp_face.FaceDetection(\n        model_selection=0,\n        min_detection_confidence=0.5\n    )\n# --------------------------------------------------\n#  (A) 餐盤殘留偵測\n# --------------------------------------------------\ndef estimate_plate_leftover(bgr_frame):\n    gray = cv2.cvtColor(bgr_frame, cv2.COLOR_BGR2GRAY)",
+        "detail": "services.vision_analysis",
+        "documentation": {}
+    },
+    {
+        "label": "estimate_plate_leftover",
+        "kind": 2,
+        "importPath": "services.vision_analysis",
+        "description": "services.vision_analysis",
+        "peekOfCode": "def estimate_plate_leftover(bgr_frame):\n    gray = cv2.cvtColor(bgr_frame, cv2.COLOR_BGR2GRAY)\n    gray = cv2.GaussianBlur(gray, (9, 9), 2)\n    circles = cv2.HoughCircles(\n        gray, cv2.HOUGH_GRADIENT, dp=1.2, minDist=120,\n        param1=100, param2=30, minRadius=60, maxRadius=0\n    )\n    if circles is None:\n        return \"未偵測到餐盤\", None, None\n    circles = np.round(circles[0, :]).astype(\"int\")",
+        "detail": "services.vision_analysis",
+        "documentation": {}
+    },
+    {
+        "label": "crop_face_with_mediapipe",
+        "kind": 2,
+        "importPath": "services.vision_analysis",
+        "description": "services.vision_analysis",
+        "peekOfCode": "def crop_face_with_mediapipe(bgr_frame, detector, min_conf=0.6):\n    rgb = cv2.cvtColor(bgr_frame, cv2.COLOR_BGR2RGB)\n    res = detector.process(rgb)\n    if not res.detections:\n        return None\n    det = res.detections[0]\n    if det.score[0] < min_conf:\n        return None\n    h, w = bgr_frame.shape[:2]\n    bbox = det.location_data.relative_bounding_box",
+        "detail": "services.vision_analysis",
+        "documentation": {}
+    },
+    {
+        "label": "detect_food_regions_yolo",
+        "kind": 2,
+        "importPath": "services.vision_analysis",
+        "description": "services.vision_analysis",
+        "peekOfCode": "def detect_food_regions_yolo(bgr, conf=0.3, min_area_ratio=0.01):\n    if not _yolo_ok:\n        return []\n    res = _yolo_food(bgr, conf=conf, iou=0.45, verbose=False)[0]\n    h, w = bgr.shape[:2]\n    out = []\n    for b in res.boxes:\n        name = res.names.get(int(b.cls.item()), \"\")\n        if name not in FOODISH_CLASSES:\n            continue",
+        "detail": "services.vision_analysis",
+        "documentation": {}
+    },
+    {
+        "label": "has_big_cup",
+        "kind": 2,
+        "importPath": "services.vision_analysis",
+        "description": "services.vision_analysis",
+        "peekOfCode": "def has_big_cup(bgr, min_area_ratio=0.04):\n    if not _yolo_ok:\n        return False\n    res = _yolo_food(bgr, conf=0.3, iou=0.45, verbose=False)[0]\n    h, w = bgr.shape[:2]\n    for b in res.boxes:\n        name = res.names.get(int(b.cls.item()), \"\")\n        if name in [\"cup\", \"wine glass\", \"bottle\"]:\n            x1, y1, x2, y2 = map(int, b.xyxy[0].tolist())\n            if ((x2 - x1) * (y2 - y1)) / (w * h) >= min_area_ratio:",
+        "detail": "services.vision_analysis",
+        "documentation": {}
+    },
+    {
+        "label": "GESTURE_BUFFER_LEN",
+        "kind": 5,
+        "importPath": "services.vision_analysis",
+        "description": "services.vision_analysis",
+        "peekOfCode": "GESTURE_BUFFER_LEN = getattr(_cfg, \"GESTURE_BUFFER_LEN\", 20)\nGESTURE_COOLDOWN   = getattr(_cfg, \"GESTURE_COOLDOWN_SECONDS\", 0.8)\nGESTURE_MIN_OFFSET = getattr(_cfg, \"GESTURE_MIN_OFFSET\", 0.002)\n# ★★★ 這裡直接改寬鬆，不用怕 config 沒設對 ★★★\nNOD_AMP_THRESH     = getattr(_cfg, \"NOD_AMP_THRESH\", 0.008)       # 很容易觸發\nSHAKE_AMP_THRESH   = getattr(_cfg, \"SHAKE_AMP_THRESH\", 0.010)\nMAX_SECONDARY_AMP  = getattr(_cfg, \"MAX_SECONDARY_AMP\", 0.020)    # 容許頭晃動\nMIN_OSC_COUNT      = getattr(_cfg, \"MIN_OSC_COUNT\", 2)            # 來回兩次就算\nMIN_FACE_CONF = getattr(_cfg, \"MIN_FACE_CONF\", 0.6)\n# --------------------------------------------------",
+        "detail": "services.vision_analysis",
+        "documentation": {}
+    },
+    {
+        "label": "GESTURE_MIN_OFFSET",
+        "kind": 5,
+        "importPath": "services.vision_analysis",
+        "description": "services.vision_analysis",
+        "peekOfCode": "GESTURE_MIN_OFFSET = getattr(_cfg, \"GESTURE_MIN_OFFSET\", 0.002)\n# ★★★ 這裡直接改寬鬆，不用怕 config 沒設對 ★★★\nNOD_AMP_THRESH     = getattr(_cfg, \"NOD_AMP_THRESH\", 0.008)       # 很容易觸發\nSHAKE_AMP_THRESH   = getattr(_cfg, \"SHAKE_AMP_THRESH\", 0.010)\nMAX_SECONDARY_AMP  = getattr(_cfg, \"MAX_SECONDARY_AMP\", 0.020)    # 容許頭晃動\nMIN_OSC_COUNT      = getattr(_cfg, \"MIN_OSC_COUNT\", 2)            # 來回兩次就算\nMIN_FACE_CONF = getattr(_cfg, \"MIN_FACE_CONF\", 0.6)\n# --------------------------------------------------\n#  模型初始化\n# --------------------------------------------------",
+        "detail": "services.vision_analysis",
+        "documentation": {}
+    },
+    {
+        "label": "MIN_FACE_CONF",
+        "kind": 5,
+        "importPath": "services.vision_analysis",
+        "description": "services.vision_analysis",
+        "peekOfCode": "MIN_FACE_CONF = getattr(_cfg, \"MIN_FACE_CONF\", 0.6)\n# --------------------------------------------------\n#  模型初始化\n# --------------------------------------------------\ntry:\n    _yolo_food = YOLO(YOLO_MODEL_PATH)\n    _yolo_ok = True\nexcept Exception as e:\n    print(f\"[YOLO 載入失敗] {e}\")\n    _yolo_food = None",
+        "detail": "services.vision_analysis",
+        "documentation": {}
+    },
+    {
+        "label": "mp_pose",
+        "kind": 5,
+        "importPath": "services.vision_analysis",
+        "description": "services.vision_analysis",
+        "peekOfCode": "mp_pose = mp.solutions.pose\nmp_face = mp.solutions.face_detection\ndef get_pose_detector():\n    return mp_pose.Pose(\n        model_complexity=0,\n        enable_segmentation=False,\n        min_detection_confidence=0.5,\n        min_tracking_confidence=0.5,\n    )\ndef get_face_detector():",
+        "detail": "services.vision_analysis",
+        "documentation": {}
+    },
+    {
+        "label": "mp_face",
+        "kind": 5,
+        "importPath": "services.vision_analysis",
+        "description": "services.vision_analysis",
+        "peekOfCode": "mp_face = mp.solutions.face_detection\ndef get_pose_detector():\n    return mp_pose.Pose(\n        model_complexity=0,\n        enable_segmentation=False,\n        min_detection_confidence=0.5,\n        min_tracking_confidence=0.5,\n    )\ndef get_face_detector():\n    return mp_face.FaceDetection(",
+        "detail": "services.vision_analysis",
+        "documentation": {}
+    },
+    {
+        "label": "display",
+        "kind": 2,
+        "importPath": "ui.dashboard_view",
+        "description": "ui.dashboard_view",
+        "peekOfCode": "def display(client):\n    st.header(\"📈 營運數據儀表板\")\n    st.caption(\"整合即時鏡頭與離線影片的歷史分析數據\")\n    # 1. 讀取資料庫\n    df = database.load_all_data()\n    if df.empty:\n        st.info(\"目前資料庫尚無紀錄，請先去「即時鏡頭分析」跑幾次 Session。\")\n        return\n    # 2. 資料預處理 (解析 JSON)\n    # 將 emotion_data 字串轉為 dict 方便統計",
+        "detail": "ui.dashboard_view",
+        "documentation": {}
+    },
+    {
+        "label": "display",
+        "kind": 2,
+        "importPath": "ui.live_view",
+        "description": "ui.live_view",
+        "peekOfCode": "def display(model_pack: dict, backend_config: dict):\n    \"\"\"\n    backend_config: 包含 store_type, tone 等後端設定\n    \"\"\"\n    lcol, rcol = st.columns([3, 1]) # 調整比例讓畫面更大\n    with rcol:\n        st.subheader(\"⚙️ 設定\")\n        analysis_mode = st.radio(\n            \"分析模式\",\n            [\"🙂 顧客行為\", \"🍽️ 餐盤剩食\"],",
+        "detail": "ui.live_view",
+        "documentation": {}
+    },
+    {
+        "label": "display",
+        "kind": 2,
+        "importPath": "ui.login_view",
+        "description": "ui.login_view",
+        "peekOfCode": "def display():\n    \"\"\"\n    顯示登入頁面並處理驗證邏輯。\n    如果登入成功，會將 st.session_state['auth'] 設為 True 並重新整理頁面。\n    \"\"\"\n    st.markdown(\"<h1 style='text-align: center;'>DineSence 顧客分析平台</h1>\", unsafe_allow_html=True)\n    st.markdown(\"---\")\n    lcol, ccol, rcol = st.columns([1, 1.5, 1])\n    with ccol:\n        with st.container(border=True):",
+        "detail": "ui.login_view",
+        "documentation": {}
+    },
+    {
+        "label": "display",
+        "kind": 2,
+        "importPath": "ui.video_view",
+        "description": "ui.video_view",
+        "peekOfCode": "def display(client, menu_items, llm_preferences):\n    \"\"\"\n    顯示「影片離線分析」分頁的所有 UI 元素與分析邏輯。\n    Args:\n        client (OpenAI): 初始化後的 OpenAI 客戶端物件。\n        menu_items (list): 從側邊欄獲取的菜單項目列表。\n        llm_preferences (dict): 包含 store_type, tone, tips_style 的字典。\n    \"\"\"\n    st.subheader(\"🎞️ 上傳影片進行離線分析與摘要\")\n    up = st.file_uploader(\"支援 .mp4 / .avi 格式\", type=[\"mp4\", \"avi\"])",
+        "detail": "ui.video_view",
+        "documentation": {}
+    },
+    {
+        "label": "load_prompt_template",
+        "kind": 2,
+        "importPath": "utils.prompt_loader",
+        "description": "utils.prompt_loader",
+        "peekOfCode": "def load_prompt_template(feature_name: str, prompt_type: str = \"user\") -> str:\n    \"\"\"\n    從 prompts 資料夾載入指定的 prompt 模板。\n    Args:\n        feature_name (str): 功能名稱 (對應到資料夾名稱，例如 'summarize_session')\n        prompt_type (str): 'user' 或 'system'\n    Returns:\n        str: 讀取到的 prompt 文字內容\n    \"\"\"\n    file_path = os.path.join(PROMPTS_DIR, feature_name, f\"{prompt_type}.txt\")",
+        "detail": "utils.prompt_loader",
+        "documentation": {}
+    },
+    {
+        "label": "PROMPTS_DIR",
+        "kind": 5,
+        "importPath": "utils.prompt_loader",
+        "description": "utils.prompt_loader",
+        "peekOfCode": "PROMPTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'prompts')\n@lru_cache(maxsize=32) # 快取讀取過的 prompt，避免重複讀取檔案\ndef load_prompt_template(feature_name: str, prompt_type: str = \"user\") -> str:\n    \"\"\"\n    從 prompts 資料夾載入指定的 prompt 模板。\n    Args:\n        feature_name (str): 功能名稱 (對應到資料夾名稱，例如 'summarize_session')\n        prompt_type (str): 'user' 或 'system'\n    Returns:\n        str: 讀取到的 prompt 文字內容",
+        "detail": "utils.prompt_loader",
+        "documentation": {}
+    },
+    {
+        "label": "initialize_state",
+        "kind": 2,
+        "importPath": "utils.state_manager",
+        "description": "utils.state_manager",
+        "peekOfCode": "def initialize_state():\n    \"\"\"\n    初始化應用程式所有分頁都會用到的 session_state。\n    此函式應在主程式 app.py 的最開始被呼叫一次。\n    \"\"\"\n    states = {\n        # --- 登入與核心物件 ---\n        \"auth\": False,\n        \"analyzer\": None,  # 用於存放 LiveAnalyzer 引擎的實例\n        # --- [新增] Session 歷史紀錄相關狀態 ---",
+        "detail": "utils.state_manager",
+        "documentation": {}
+    },
+    {
+        "label": "load_models",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def load_models():\n    database.init_db() # [NEW] 初始化資料庫\n    openai_client = llm_handler.get_openai_client(config.OPENAI_API_KEY)\n    pose_detector = va.get_pose_detector()\n    face_detector = va.get_face_detector()\n    _ = va.get_food_model() if hasattr(va, 'get_food_model') else None\n    body_emotion_detector = BodyEmotionDetector()\n    emotion_analyzer = EmotionSatisfactionAnalyzer()\n    return openai_client, pose_detector, face_detector, body_emotion_detector, emotion_analyzer\nstate_manager.initialize_state()",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "BACKEND_CONFIG",
+        "kind": 5,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "BACKEND_CONFIG = {\n    \"store_type\": \"自助式餐廳 (Buffet)\", \n    \"tone\": \"專業客觀\",\n    \"tips_style\": \"營運流程優化\",\n    # 菜單現在主要用於後端分析參考，即時分析暫時不依賴它\n    \"menu_items\": [\"熱門主食\", \"季節蔬菜\", \"甜點區\", \"飲料區\"] \n}\nmodel_pack = {\n    \"client\": client,\n    \"pose_detector\": pose_detector,",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "model_pack",
+        "kind": 5,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "model_pack = {\n    \"client\": client,\n    \"pose_detector\": pose_detector,\n    \"face_detector\": face_detector\n}\n# --- 5. 主頁面 UI ---\nst.title(\"🍽️ DineSence 顧客分析平台\")\nif not client:\n    st.error(\"⚠️ 偵測不到 OpenAI API 金鑰！請檢查 .env 檔案。\")\nelse:",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "DASH_USER",
+        "kind": 5,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "DASH_USER = \"admin\"\nDASH_PASS = \"1234\"\nOPENAI_API_KEY = os.getenv(\"OPENAI_API_KEY\")\n# ---------------------\n# LLM Setting\n# ---------------------\nLLM_MODEL_EMOTION = \"gpt-4o-mini\"\nLLM_MODEL_SUMMARY = \"gpt-4o-mini\"\n# ---------------------\n# Camera Setting",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "DASH_PASS",
+        "kind": 5,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "DASH_PASS = \"1234\"\nOPENAI_API_KEY = os.getenv(\"OPENAI_API_KEY\")\n# ---------------------\n# LLM Setting\n# ---------------------\nLLM_MODEL_EMOTION = \"gpt-4o-mini\"\nLLM_MODEL_SUMMARY = \"gpt-4o-mini\"\n# ---------------------\n# Camera Setting\n# ---------------------",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "OPENAI_API_KEY",
+        "kind": 5,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "OPENAI_API_KEY = os.getenv(\"OPENAI_API_KEY\")\n# ---------------------\n# LLM Setting\n# ---------------------\nLLM_MODEL_EMOTION = \"gpt-4o-mini\"\nLLM_MODEL_SUMMARY = \"gpt-4o-mini\"\n# ---------------------\n# Camera Setting\n# ---------------------\nCAMERA_RESOLUTION_WIDTH = 640",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "LLM_MODEL_EMOTION",
+        "kind": 5,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "LLM_MODEL_EMOTION = \"gpt-4o-mini\"\nLLM_MODEL_SUMMARY = \"gpt-4o-mini\"\n# ---------------------\n# Camera Setting\n# ---------------------\nCAMERA_RESOLUTION_WIDTH = 640\nCAMERA_RESOLUTION_HEIGHT = 360\nCAMERA_BUFFER_SIZE = 2\nEMOTE_INTERVAL_SECONDS = 1.5\n# ---------------------",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "LLM_MODEL_SUMMARY",
+        "kind": 5,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "LLM_MODEL_SUMMARY = \"gpt-4o-mini\"\n# ---------------------\n# Camera Setting\n# ---------------------\nCAMERA_RESOLUTION_WIDTH = 640\nCAMERA_RESOLUTION_HEIGHT = 360\nCAMERA_BUFFER_SIZE = 2\nEMOTE_INTERVAL_SECONDS = 1.5\n# ---------------------\n# Head Gesture Detection (Nod & Shake)",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "CAMERA_RESOLUTION_WIDTH",
+        "kind": 5,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "CAMERA_RESOLUTION_WIDTH = 640\nCAMERA_RESOLUTION_HEIGHT = 360\nCAMERA_BUFFER_SIZE = 2\nEMOTE_INTERVAL_SECONDS = 1.5\n# ---------------------\n# Head Gesture Detection (Nod & Shake)\n# ---------------------\n# 採用嚴格版偵測參數\nGESTURE_BUFFER_LEN = 20           # 緩衝長度\nGESTURE_COOLDOWN_SECONDS = 1.0    # 冷卻時間",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "CAMERA_RESOLUTION_HEIGHT",
+        "kind": 5,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "CAMERA_RESOLUTION_HEIGHT = 360\nCAMERA_BUFFER_SIZE = 2\nEMOTE_INTERVAL_SECONDS = 1.5\n# ---------------------\n# Head Gesture Detection (Nod & Shake)\n# ---------------------\n# 採用嚴格版偵測參數\nGESTURE_BUFFER_LEN = 20           # 緩衝長度\nGESTURE_COOLDOWN_SECONDS = 1.0    # 冷卻時間\nGESTURE_MIN_OFFSET = 0.002        # 去抖動門檻",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "CAMERA_BUFFER_SIZE",
+        "kind": 5,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "CAMERA_BUFFER_SIZE = 2\nEMOTE_INTERVAL_SECONDS = 1.5\n# ---------------------\n# Head Gesture Detection (Nod & Shake)\n# ---------------------\n# 採用嚴格版偵測參數\nGESTURE_BUFFER_LEN = 20           # 緩衝長度\nGESTURE_COOLDOWN_SECONDS = 1.0    # 冷卻時間\nGESTURE_MIN_OFFSET = 0.002        # 去抖動門檻\n# 判定參數",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "EMOTE_INTERVAL_SECONDS",
+        "kind": 5,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "EMOTE_INTERVAL_SECONDS = 1.5\n# ---------------------\n# Head Gesture Detection (Nod & Shake)\n# ---------------------\n# 採用嚴格版偵測參數\nGESTURE_BUFFER_LEN = 20           # 緩衝長度\nGESTURE_COOLDOWN_SECONDS = 1.0    # 冷卻時間\nGESTURE_MIN_OFFSET = 0.002        # 去抖動門檻\n# 判定參數\nNOD_AMP_THRESH = 0.015            # Y 軸振幅門檻 (點頭)",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "GESTURE_BUFFER_LEN",
+        "kind": 5,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "GESTURE_BUFFER_LEN = 20           # 緩衝長度\nGESTURE_COOLDOWN_SECONDS = 1.0    # 冷卻時間\nGESTURE_MIN_OFFSET = 0.002        # 去抖動門檻\n# 判定參數\nNOD_AMP_THRESH = 0.015            # Y 軸振幅門檻 (點頭)\nSHAKE_AMP_THRESH = 0.020          # X 軸振幅門檻 (搖頭)\nMAX_SECONDARY_AMP = 0.010         # 非主軸的最大容許振幅 (超過則視為模糊動作)\nMIN_OSC_COUNT = 3                 # 最小來回次數\n# --------------------\n# Plate Detection",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "GESTURE_COOLDOWN_SECONDS",
+        "kind": 5,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "GESTURE_COOLDOWN_SECONDS = 1.0    # 冷卻時間\nGESTURE_MIN_OFFSET = 0.002        # 去抖動門檻\n# 判定參數\nNOD_AMP_THRESH = 0.015            # Y 軸振幅門檻 (點頭)\nSHAKE_AMP_THRESH = 0.020          # X 軸振幅門檻 (搖頭)\nMAX_SECONDARY_AMP = 0.010         # 非主軸的最大容許振幅 (超過則視為模糊動作)\nMIN_OSC_COUNT = 3                 # 最小來回次數\n# --------------------\n# Plate Detection\n# --------------------",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "GESTURE_MIN_OFFSET",
+        "kind": 5,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "GESTURE_MIN_OFFSET = 0.002        # 去抖動門檻\n# 判定參數\nNOD_AMP_THRESH = 0.015            # Y 軸振幅門檻 (點頭)\nSHAKE_AMP_THRESH = 0.020          # X 軸振幅門檻 (搖頭)\nMAX_SECONDARY_AMP = 0.010         # 非主軸的最大容許振幅 (超過則視為模糊動作)\nMIN_OSC_COUNT = 3                 # 最小來回次數\n# --------------------\n# Plate Detection\n# --------------------\nYOLO_MODEL_PATH = \"yolov8n.pt\"",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "NOD_AMP_THRESH",
+        "kind": 5,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "NOD_AMP_THRESH = 0.015            # Y 軸振幅門檻 (點頭)\nSHAKE_AMP_THRESH = 0.020          # X 軸振幅門檻 (搖頭)\nMAX_SECONDARY_AMP = 0.010         # 非主軸的最大容許振幅 (超過則視為模糊動作)\nMIN_OSC_COUNT = 3                 # 最小來回次數\n# --------------------\n# Plate Detection\n# --------------------\nYOLO_MODEL_PATH = \"yolov8n.pt\"\nFOODISH_CLASSES = {\n    \"cake\", \"pizza\", \"hot dog\", \"banana\", \"apple\", \"sandwich\", \"orange\",",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "SHAKE_AMP_THRESH",
+        "kind": 5,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "SHAKE_AMP_THRESH = 0.020          # X 軸振幅門檻 (搖頭)\nMAX_SECONDARY_AMP = 0.010         # 非主軸的最大容許振幅 (超過則視為模糊動作)\nMIN_OSC_COUNT = 3                 # 最小來回次數\n# --------------------\n# Plate Detection\n# --------------------\nYOLO_MODEL_PATH = \"yolov8n.pt\"\nFOODISH_CLASSES = {\n    \"cake\", \"pizza\", \"hot dog\", \"banana\", \"apple\", \"sandwich\", \"orange\",\n    \"broccoli\", \"carrot\", \"bowl\", \"cup\", \"wine glass\", \"bottle\", \"spoon\",",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "MAX_SECONDARY_AMP",
+        "kind": 5,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "MAX_SECONDARY_AMP = 0.010         # 非主軸的最大容許振幅 (超過則視為模糊動作)\nMIN_OSC_COUNT = 3                 # 最小來回次數\n# --------------------\n# Plate Detection\n# --------------------\nYOLO_MODEL_PATH = \"yolov8n.pt\"\nFOODISH_CLASSES = {\n    \"cake\", \"pizza\", \"hot dog\", \"banana\", \"apple\", \"sandwich\", \"orange\",\n    \"broccoli\", \"carrot\", \"bowl\", \"cup\", \"wine glass\", \"bottle\", \"spoon\",\n    \"fork\", \"knife\", \"plate\"",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "MIN_OSC_COUNT",
+        "kind": 5,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "MIN_OSC_COUNT = 3                 # 最小來回次數\n# --------------------\n# Plate Detection\n# --------------------\nYOLO_MODEL_PATH = \"yolov8n.pt\"\nFOODISH_CLASSES = {\n    \"cake\", \"pizza\", \"hot dog\", \"banana\", \"apple\", \"sandwich\", \"orange\",\n    \"broccoli\", \"carrot\", \"bowl\", \"cup\", \"wine glass\", \"bottle\", \"spoon\",\n    \"fork\", \"knife\", \"plate\"\n}",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "YOLO_MODEL_PATH",
+        "kind": 5,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "YOLO_MODEL_PATH = \"yolov8n.pt\"\nFOODISH_CLASSES = {\n    \"cake\", \"pizza\", \"hot dog\", \"banana\", \"apple\", \"sandwich\", \"orange\",\n    \"broccoli\", \"carrot\", \"bowl\", \"cup\", \"wine glass\", \"bottle\", \"spoon\",\n    \"fork\", \"knife\", \"plate\"\n}",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "FOODISH_CLASSES",
+        "kind": 5,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "FOODISH_CLASSES = {\n    \"cake\", \"pizza\", \"hot dog\", \"banana\", \"apple\", \"sandwich\", \"orange\",\n    \"broccoli\", \"carrot\", \"bowl\", \"cup\", \"wine glass\", \"bottle\", \"spoon\",\n    \"fork\", \"knife\", \"plate\"\n}",
+        "detail": "config",
+        "documentation": {}
+    }
+]

@@ -183,7 +183,7 @@ with top_col1:
     st.markdown(f"<h1>DineSence <span style='color:var(--primary-color); text-shadow:0 0 15px var(--primary-color);'></span> <span style='font-size:0.5em; opacity:0.7;'>// {t('live_panel_title')}</span></h1>", unsafe_allow_html=True)
 
 with top_col2:
-    with st.popover(t("settings"), use_container_width=True):
+    with st.popover(t("選擇語言"), use_container_width=True):
         st.markdown(f"##### 🌐 {t('select_lang')}")
         lang_choice = st.radio(
             "Language",

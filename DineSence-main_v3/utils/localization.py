@@ -4,7 +4,7 @@ TRANSLATIONS = {
     "zh": {
         # 通用
         "app_title": "DineSence智慧餐飲分析",
-        "settings": "選擇語言 (Language)",
+        "settings": "系統設定",
         "select_lang": " ",
         
         # Tabs
@@ -67,7 +67,7 @@ TRANSLATIONS = {
     "en": {
         # General
         "app_title": "DineSence AI Analytics",
-        "settings": "Language",
+        "settings": "System settings",
         "select_lang": " ",
 
         # Tabs

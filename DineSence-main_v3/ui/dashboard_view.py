@@ -10,6 +10,7 @@ import os
 from collections import Counter
 from services import llm_handler as llm
 from services.database import DatabaseManager 
+import plotly.express as px
 
 EVIDENCE_DIR = "session_evidence"
 
@@ -240,8 +241,18 @@ def display(client, db_manager, t=None):
 
                 if data_found and all_emotions:
                     e_df = pd.DataFrame(all_emotions.items(), columns=['Emotion', 'Count'])
-                    e_df = e_df.set_index('Emotion').sort_values('Count', ascending=False)
-                    st.bar_chart(e_df, color="#8b5cf6", use_container_width=True)
+                    # 使用 Plotly 繪製，並設定 X 軸文字角度
+                    fig = px.bar(
+                        e_df, 
+                        x='Emotion', 
+                        y='Count', 
+                        color_discrete_sequence=['#8b5cf6'],
+                        text_auto=True # 顯示數值在柱狀圖上
+                    )
+                    # ★ 強制 X 軸文字水平顯示 (0度)
+                    fig.update_layout(xaxis_tickangle=0)
+                    
+                    st.plotly_chart(fig, use_container_width=True)
                 else:
                     st.info("NO DETAILED EMOTIONS")
             else:

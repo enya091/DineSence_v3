@@ -194,12 +194,22 @@ def display(model_pack: dict, backend_config: dict, db_manager, t=None):
                     st.session_state.last_plate_insight = result.plate_insight
 
                 # 更新日誌 (Log)
-                if result.nod_event or getattr(result, "shake_event", False) or result.plate_event:
+                if result.nod_event or getattr(result, "shake_event", False) or result.plate_event or result.emotion_event:
                     timestamp = datetime.now().strftime("%H:%M:%S")
-                    event_type = f"NOD:{st.session_state.nod_count}" if result.nod_event else ""
-                    event_type += f" SHAKE:{st.session_state.shake_count}" if getattr(result, "shake_event", False) else ""
-                    event_type += f" PLATE:{result.plate_event[:10]}" if result.plate_event else ""
-                    log_msg = f"[{timestamp}] DETECTED: {event_type}"
+                    event_type = "" # 重置字串
+                    
+                    if result.nod_event: 
+                        event_type += f"NOD "
+                    if getattr(result, "shake_event", False): 
+                        event_type += f"SHAKE "
+                    if result.plate_event: 
+                        event_type += f"PLATE:{result.plate_event[:5]} "
+                    
+                    # ★ 2. 加入情緒文字
+                    if result.emotion_event:
+                        event_type += f"😊:{result.emotion_event} "
+                    
+                    log_msg = f"[{timestamp}] {event_type}"
                     log_buffer.append(log_msg)
                     if len(log_buffer) > MAX_LOG_LINES: log_buffer.pop(0)
 

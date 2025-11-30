@@ -1,10 +1,14 @@
 streamlit
 opencv-python
 mediapipe==0.10.14
-openai==1.25.0
-numpy==2.2.6
-Pillow==11.3.0
-httpx == 0.26.0
+openai
+numpy<2.0.0
+Pillow
+httpx
 ultralytics
 python-dotenv
 plotly
+pandas
+deepface
+tf-keras
+tensorflow==2.15.0

@@ -60,6 +60,175 @@ def _render_evidence_grid(db_manager, session_id, event_type):
             with col:
                 st.warning(f"MISSING {evidence_id}")
 
+def _render_global_insights(client, db_manager, df_sessions, t):
+    """
+    [NEW] 總體數據洞察：跨 Session 的菜色情緒統計與 LLM 報告
+    """
+    st.info("此頁面統計範圍為上方「篩選器」所選定之時間段內的數據。")
+
+    if df_sessions.empty:
+        st.warning("⚠️ 目前選定的時間範圍內無 Session 資料。")
+        return
+
+    # 1. 跨 Session 資料聚合 (Data Aggregation)
+    all_food_data = []
+    
+    # 遍歷篩選出的所有 Session
+    for _, session_row in df_sessions.iterrows():
+        sid = session_row['session_id_raw']
+        
+        # 撈取該 Session 的餐點證據
+        df_evidence = db_manager.get_event_evidence(sid, "strong_emotion_plate")
+        
+        if df_evidence.empty: continue
+            
+        for _, row in df_evidence.iterrows():
+            # 排除人工否決的資料
+            if row['human_corrected'] == 0: continue
+                
+            food_name = row['food_label'] if row['food_label'] else "Unknown"
+            
+            # 解析情緒 (從檔名)
+            # 檔名格式: 時間_情緒-分_...
+            try:
+                fname = os.path.basename(row['local_path'])
+                parts = fname.split('_')
+                emotion_tag = parts[2].split('-')[0] # 取出 "開心"
+                
+                all_food_data.append({
+                    "session_id": sid,
+                    "evidence_id": row['id'],
+                    "food": food_name,
+                    "emotion": emotion_tag,
+                    "path": row['local_path'],
+                    "timestamp": row['session_timestamp'] # 這裡可能是 session_id，需注意顯示格式
+                })
+            except:
+                continue
+
+    if not all_food_data:
+        st.warning("⚠️ 在此時間範圍內，尚未偵測到任何有效的餐點情緒數據。")
+        return
+
+    df_analysis = pd.DataFrame(all_food_data)
+
+    # 2. 統計數據準備 (給 LLM 用)
+    # 格式: {'漢堡': {'開心': 5, '嫌棄': 1}, '薯條': ...}
+    food_stats = {}
+    for food in df_analysis['food'].unique():
+        sub_df = df_analysis[df_analysis['food'] == food]
+        counts = sub_df['emotion'].value_counts().to_dict()
+        food_stats[food] = counts
+
+    # ==========================================
+    # 區塊 A: LLM 總體洞察報告
+    # ==========================================
+    with st.container(border=True):
+        st.subheader("🤖 AI 營運洞察報告")
+        st.markdown("讓 AI 為您分析本時段內，各項餐點的顧客情緒表現。")
+        
+        if st.button(t("btn_gen_insight_report"), type="primary", use_container_width=True):
+            if not client:
+                st.error("未設定 OpenAI API Key")
+            else:
+                with st.spinner("AI 正在分析大數據..."):
+                    # 組建 Prompt
+                    stats_str = json.dumps(food_stats, ensure_ascii=False, indent=2)
+                    system_prompt = (
+                        "你是一位專業的餐廳數據分析師。使用者會提供一份 JSON 數據，"
+                        "內容是不同菜色對應的顧客情緒統計 (例如: 漢堡 -> 開心:5, 嫌棄:2)。\n"
+                        "請根據數據生成一份繁體中文報告，包含：\n"
+                        "1. 🏆 **明星菜色**：哪道菜的正面情緒(開心/驚艷)比例最高？\n"
+                        "2. ⚠️ **改進建議**：哪道菜出現了負面情緒(嫌棄/失望/不滿)？可能原因？\n"
+                        "3. 💡 **總結洞察**：整體菜單的表現評價。\n"
+                        "請用專業、簡潔的條列式語氣回答。"
+                    )
+                    user_prompt = f"請分析以下餐點情緒數據：\n{stats_str}"
+
+                    async def run_gpt():
+                        try:
+                            resp = await client.chat.completions.create(
+                                model="gpt-4o",
+                                messages=[
+                                    {"role": "system", "content": system_prompt},
+                                    {"role": "user", "content": user_prompt}
+                                ],
+                                temperature=0.7
+                            )
+                            return resp.choices[0].message.content
+                        except Exception as e:
+                            return f"Error: {e}"
+                            
+                    report_text = asyncio.run(run_gpt())
+                    st.markdown("---")
+                    st.markdown(report_text)
+
+    st.divider()
+
+    # ==========================================
+    # 區塊 B: 單品項詳細分析
+    # ==========================================
+    c1, c2 = st.columns([1, 2])
+    
+    with c1:
+        st.markdown("### 🍔 菜色細節查詢")
+        food_list = sorted(list(food_stats.keys()))
+        selected_food = st.selectbox("選擇要鑽研的菜色", food_list)
+        
+        # 顯示該菜色的基本數據
+        if selected_food:
+            stats = food_stats[selected_food]
+            total = sum(stats.values())
+            st.caption(f"共蒐集到 {total} 筆反應")
+            st.json(stats)
+
+    with c2:
+        if selected_food:
+            # 畫圖
+            df_target = df_analysis[df_analysis['food'] == selected_food]
+            emo_counts = df_target['emotion'].value_counts().reset_index()
+            emo_counts.columns = ['Emotion', 'Count']
+            
+            fig = px.bar(
+                emo_counts, x='Emotion', y='Count',
+                title=f"「{selected_food}」情緒分佈圖",
+                color='Emotion', text_auto=True,
+                color_discrete_sequence=px.colors.qualitative.Pastel
+            )
+            st.plotly_chart(fig, use_container_width=True)
+
+    # ==========================================
+    # 區塊 C: 證據驗證與修正
+    # ==========================================
+    st.subheader(f"✅ 資料驗證 ({selected_food})")
+    
+    target_records = df_analysis[df_analysis['food'] == selected_food]
+    
+    # Grid 顯示
+    cols = st.columns(4)
+    for i, row in target_records.iterrows():
+        col = cols[i % 4]
+        with col:
+            with st.container(border=True):
+                # 顯示圖片
+                if os.path.exists(row['path']):
+                    st.image(row['path'], use_container_width=True)
+                else:
+                    st.warning("影像遺失")
+                
+                # 情緒標籤
+                st.markdown(f"**{row['emotion']}**")
+                
+                # 勾選框
+                chk_key = f"g_chk_{row['evidence_id']}"
+                
+                def update_cb(eid=row['evidence_id'], k=chk_key):
+                    val = st.session_state[k]
+                    db_manager.update_evidence_feedback(eid, val)
+                    if not val: st.toast(f"已從統計中移除 (ID: {eid})")
+
+                st.checkbox("確認無誤", value=True, key=chk_key, on_change=update_cb)
+
 def _render_comparison_gallery(db_manager, session_id):
     """
     [NEW] 強烈情緒交叉比對畫廊
@@ -70,7 +239,7 @@ def _render_comparison_gallery(db_manager, session_id):
     df_plate = db_manager.get_event_evidence(session_id, "strong_emotion_plate")
     
     if df_face.empty and df_plate.empty:
-        st.info("尚未偵測到強烈情緒事件 (Confidence > 50%)")
+        st.info("尚未偵測到強烈情緒事件 (Confidence > 40%)")
         return
 
     # 2. 進行配對 (Pairing)
@@ -138,6 +307,144 @@ def _render_comparison_gallery(db_manager, session_id):
                     st.image(plate_path, use_container_width=True)
                 else:
                     st.warning("影像遺失")
+def _render_food_insights(db_manager, session_id):
+    """
+    [NEW] 餐點洞察模式：以食物為中心，統計顧客的情緒反應
+    """
+    # 1. 撈取該 Session 所有「強烈情緒的餐盤照」
+    # 這些照片已經經過 LLM 辨識，帶有 food_label
+    df_plate = db_manager.get_event_evidence(session_id, "strong_emotion_plate")
+    
+    if df_plate.empty:
+        st.info("尚無 AI 辨識的餐點數據")
+        return
+
+    # 2. 資料前處理：解析檔名中的情緒，並過濾無效數據
+    data_list = []
+    
+    for _, row in df_plate.iterrows():
+        # 如果使用者已經手動取消勾選 (human_corrected=0)，就排除這筆資料
+        if row['human_corrected'] == 0:
+            continue
+            
+        food_name = row['food_label'] if row['food_label'] else "Unknown"
+        path = row['local_path']
+        evidence_id = row['id']
+        
+        # 從檔名解析情緒
+        # 格式: {時間}_{情緒1-分}_{情緒2-分}_Plate.jpg
+        # 範例: 12月01日_..._開心-98_驚艷-02_Plate.jpg
+        try:
+            filename = os.path.basename(path)
+            parts = filename.split('_')
+            
+            # 取出第一高分的情緒
+            e1_tag = parts[2] # "開心-98"
+            emotion_label = e1_tag.split('-')[0] # "開心"
+            
+            # 為了顯示方便，我們也嘗試找對應的臉部照片
+            # 只要把檔名結尾的 Plate.jpg 改成 Face.jpg 即可
+            face_path = path.replace("_Plate.jpg", "_Face.jpg")
+            
+            data_list.append({
+                "id": evidence_id,
+                "food": food_name,
+                "emotion": emotion_label,
+                "plate_path": path,
+                "face_path": face_path,
+                "timestamp": parts[1]
+            })
+        except:
+            continue
+
+    if not data_list:
+        st.warning("沒有有效的餐點數據 (可能都被取消勾選了)")
+        return
+
+    df_analysis = pd.DataFrame(data_list)
+
+   # 3. UI 佈局
+    all_foods = sorted(df_analysis['food'].unique().tolist())
+    
+    c1, c2 = st.columns([1, 3])
+    with c1:
+        st.markdown("### 🍔 選擇餐點")
+        # ★★★ [修正] 加上 key 參數，綁定 session_id ★★★
+        selected_food = st.selectbox(
+            "請選擇要分析的菜色", 
+            all_foods, 
+            key=f"food_select_{session_id}" 
+        )
+    
+    # 篩選出該食物的資料
+    df_target = df_analysis[df_analysis['food'] == selected_food]
+    
+    with c2:
+        # ==========================================
+        # UI 區塊 B: 統計直方圖
+        # ==========================================
+        if not df_target.empty:
+            # 統計各種情緒的出現次數
+            emo_counts = df_target['emotion'].value_counts().reset_index()
+            emo_counts.columns = ['Emotion', 'Count']
+            
+            fig = px.bar(
+                emo_counts, x='Emotion', y='Count',
+                title=f"顧客對「{selected_food}」的情緒反應分佈",
+                color='Emotion',
+                text_auto=True,
+                color_discrete_sequence=px.colors.qualitative.Pastel
+            )
+            st.plotly_chart(fig, use_container_width=True)
+        else:
+            st.info("此餐點無數據")
+
+    st.divider()
+
+    # ==========================================
+    # UI 區塊 C: 詳細佐證與人工驗證
+    # ==========================================
+    st.markdown(f"### ✅ 資料驗證 ({len(df_target)} 筆)")
+    st.caption("如果您發現 AI 判斷錯誤 (例如：這不是漢堡，或表情判斷錯誤)，請取消勾選，上方的統計圖表會自動扣除該筆數據。")
+
+    # 使用 Grid 顯示
+    cols = st.columns(3)
+    
+    for i, row in df_target.iterrows():
+        col = cols[i % 3]
+        with col:
+            with st.container(border=True):
+                # 標題
+                st.markdown(f"**{row['emotion']}** <span style='color:gray'>({row['timestamp']})</span>", unsafe_allow_html=True)
+                
+                # 左右並排顯示圖
+                img_c1, img_c2 = st.columns(2)
+                with img_c1:
+                    if os.path.exists(row['face_path']):
+                        st.image(row['face_path'], use_container_width=True)
+                    else: st.text("No Face")
+                with img_c2:
+                    st.image(row['plate_path'], use_container_width=True)
+
+                # 勾選框 (互動核心)
+                # 當使用者改變勾選狀態時，會呼叫 db_manager 更新資料庫，然後 Streamlit 會自動重跑 (Rerun)
+                checkbox_key = f"chk_food_{row['id']}"
+                
+                def on_change_callback(eid=row['id'], k=checkbox_key):
+                    # 取得最新狀態
+                    new_val = st.session_state[k]
+                    # 更新資料庫
+                    db_manager.update_evidence_feedback(eid, new_val)
+                    # 提示
+                    if not new_val:
+                        st.toast(f"已移除 ID {eid}，圖表將重新計算")
+
+                st.checkbox(
+                    "資料正確 (納入統計)", 
+                    value=True, 
+                    key=checkbox_key,
+                    on_change=on_change_callback
+                )
 
 def _render_all_emotions_gallery(db_manager, session_id):
     """
@@ -460,16 +767,28 @@ def display(client, db_manager, t=None):
                 unique_session_id = row['session_id_raw']
 
                 with st.expander(label, expanded=False):
-                    # ★★★ [修改] 增加第 5 個 Tab: ALL EMOTIONS ★★★
-                    t1, t2, t3, t4, t5 = st.tabs(["🎥 NOD", "🎥 SHAKE", "🍽️ WASTE", "🔥 CROSS-CHECK", "😊 ALL EMOTIONS"])
+                    
+                    # 🔴 原本是 5 個 Tabs
+                    # t1, t2, t3, t4, t5 = st.tabs([...])
+
+                    # 🟢 請改成 6 個 Tabs (加入 FOOD INSIGHTS)
+                    t1, t2, t3, t4, t5, t6 = st.tabs([
+                        "🎥 NOD", 
+                        "🎥 SHAKE", 
+                        "🍽️ WASTE", 
+                        "🔥 CROSS-CHECK", 
+                        "😊 ALL EMOTIONS", 
+                        "🍽️ FOOD INSIGHTS"  # <--- 新增這個
+                    ])
                     
                     with t1: _render_evidence_grid(db, unique_session_id, 'nod')
                     with t2: _render_evidence_grid(db, unique_session_id, 'shake')
                     with t3: _render_evidence_grid(db, unique_session_id, 'plate_vlm')
                     with t4: _render_comparison_gallery(db, unique_session_id)
+                    with t5: _render_global_insights(client, db, df_sessions, t)
                     
-                    # [新增] 呼叫新函式
-                    with t5:
-                        _render_all_emotions_gallery(db, unique_session_id)
+                    # 🟢 加入第 6 個分頁的內容
+                    with t6:
+                        _render_food_insights(db, unique_session_id)
         else:
             st.info("NO DATA")

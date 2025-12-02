@@ -40,6 +40,11 @@ from services import llm_handler as llm
 import config as _cfg
 from .types import AnalysisResult
 
+from services.llm_handler import (
+    analyze_plate_vlm, 
+    identify_food_item  # ★ [NEW] 記得引入這個！
+)
+
 EMOTE_INTERVAL_SECONDS   = getattr(_cfg, "EMOTE_INTERVAL_SECONDS", 2.0)
 CAMERA_RESOLUTION_WIDTH  = getattr(_cfg, "CAMERA_RESOLUTION_WIDTH", 1280)
 CAMERA_RESOLUTION_HEIGHT = getattr(_cfg, "CAMERA_RESOLUTION_HEIGHT", 720)
@@ -266,7 +271,7 @@ class LiveAnalyzer:
                     self._cached_plate_label = None 
                     self._cached_plate_ratio = None
                 self._cached_plate_circle = circle
-                self._cached_food_detections = detect_food_regions_yolo(frame)
+                # self._cached_food_detections = detect_food_regions_yolo(frame)
             except Exception: pass
         
         # 填入 Result
@@ -361,36 +366,37 @@ class LiveAnalyzer:
             # =========================================================
             if self._cross_capture_signal:
                 signal = self._cross_capture_signal
-                self._cross_capture_signal = None # 重置訊號，避免重複拍
+                self._cross_capture_signal = None 
                 
                 if face_frame is not None and plate_frame is not None:
                     try:
+                        # (A) 準備檔名資訊
                         now = datetime.now()
                         readable_ts = now.strftime("%m月%d日_%H點%M分%S秒")
-                        
-                        # [修改] 組合新檔名資訊
-                        # 格式: 11月30日_..._開心-98_驚艷-02_Face.jpg
-                        # 使用 "-" 連接分數，避免與 "_" 衝突
                         e1_name, e1_score = signal["top1"]
                         e2_name, e2_score = signal["top2"]
-                        
                         emo_tag_1 = f"{e1_name}-{int(e1_score)}"
                         emo_tag_2 = f"{e2_name}-{int(e2_score)}"
                         
-                        # 1. 存人臉
+                        # (B) 處理人臉 (Face) - 保持簡單，直接存
                         face_filename = f"{readable_ts}_{emo_tag_1}_{emo_tag_2}_Face.jpg"
                         face_path = self._save_custom_file(face_filename, face_frame)
+                        if face_path:
+                            self.db_manager.save_event_evidence(
+                                self.session_id, "strong_emotion_face", face_path
+                            )
                         
-                        # 2. 存餐盤 (為了對照方便，餐盤檔名維持簡單，或也加上詳細資訊皆可)
-                        # 這裡我們讓餐盤也帶上一樣的詳細資訊，方便對應
+                        # (C) 處理餐盤 (Plate) - ★ [修改] 啟動背景辨識
                         plate_filename = f"{readable_ts}_{emo_tag_1}_{emo_tag_2}_Plate.jpg"
                         plate_path = self._save_custom_file(plate_filename, plate_frame)
                         
-                        # 3. 寫入資料庫
-                        if face_path:
-                            self.db_manager.save_event_evidence(self.session_id, "strong_emotion_face", face_path)
                         if plate_path:
-                            self.db_manager.save_event_evidence(self.session_id, "strong_emotion_plate", plate_path)
+                            print(f"📸 雙鏡頭快照完成，正在背景辨識食物...")
+                            # 啟動一條新執行緒去跑 LLM，避免卡住主畫面
+                            threading.Thread(
+                                target=self._background_identify_and_save,
+                                args=(plate_frame.copy(), plate_path, self.session_id)
+                            ).start()
                             
                     except Exception as e:
                         print(f"Snapshot Error: {e}")
@@ -399,6 +405,8 @@ class LiveAnalyzer:
             # 3. 處理異步回傳的資料
             if self._cached_plate_insight: 
                 result.plate_insight = self._cached_plate_insight
+                self._cached_plate_insight = None
+                
             if self._cached_token_usage:
                 result.token_usage_event = self._cached_token_usage
                 self._cached_token_usage = None 
@@ -434,6 +442,34 @@ class LiveAnalyzer:
             print(f"VLM Error: {e}")
         finally:
             self._vlm_busy = False 
+
+    def _background_identify_and_save(self, frame, local_path, session_id):
+        """
+        [NEW] 背景任務：辨識食物並存入 DB
+        """
+        try:
+            client = self.model_pack.get("client")
+            # 定義候選菜單 (您可以從 config 或外部傳入)
+            menu_list = self.menu_items if self.menu_items else ["漢堡", "雞塊", "薯條"]
+            
+            # 1. 呼叫 LLM 辨識 (同步執行 async 函式)
+            # 因為這是在獨立的 Thread 跑，所以用 asyncio.run 是安全的
+            food_name = asyncio.run(identify_food_item(frame, menu_list, client))
+            
+            print(f"🍔 [AI 辨識結果] {food_name}")
+
+            # 2. 存入資料庫 (帶有 food_label)
+            self.db_manager.save_event_evidence(
+                session_id=session_id, 
+                event_type="strong_emotion_plate", 
+                local_path=local_path,
+                food_label=food_name  # ★ 把辨識結果存進去
+            )
+            
+        except Exception as e:
+            print(f"Food ID Task Error: {e}")
+            # 失敗也要存，但 label 是 None
+            self.db_manager.save_event_evidence(session_id, "strong_emotion_plate", local_path, "Unknown")
 
     def _run_deepface_background(self, frame, face_detector):
         try:
@@ -471,25 +507,26 @@ class LiveAnalyzer:
             top1_zh = mapping.get(top1_name, top1_name)
             top2_zh = mapping.get(top2_name, top2_name)
 
-            # 更新快取
+            # ★★★ [重點 1] 更新快取 (給 DB 用)：保持純文字 ★★★
             self._cached_emotion = top1_zh 
             
-            # 4. [修改] 強烈情緒觸發邏輯
-            # 條件：第一名不是平淡，且分數 > 75%
-            INTENSITY_THRESHOLD = 75.0 
+            # 4. 強烈情緒觸發邏輯
+            # 條件：第一名不是平淡，且分數 > 50% (您設定的值)
+            INTENSITY_THRESHOLD = 50.0 
             
             if top1_name != "neutral" and top1_score > INTENSITY_THRESHOLD:
                 print(f"🔥 強烈情緒: {top1_zh}({top1_score:.0f}%) / {top2_zh}({top2_score:.0f}%)")
                 
                 # 發送訊號：傳遞更完整的資訊
                 self._cross_capture_signal = {
-                    "top1": (top1_zh, top1_score), # ("開心", 98.5)
-                    "top2": (top2_zh, top2_score)  # ("驚艷", 2.1)
+                    "top1": (top1_zh, top1_score), 
+                    "top2": (top2_zh, top2_score) 
                 }
 
-            # Log 鎖定 (保持不變)
+            # ★★★ [重點 2] Log 鎖定 (給 UI 用)：加上分數 ★★★
             with self._latch_lock:
-                self._latched_emotion = top1_zh 
+                # 這裡改成 formatted string，讓介面顯示 "開心 (98%)"
+                self._latched_emotion = f"{top1_zh} ({top1_score:.0f}%)"
                 
         except Exception as e:
             print(f"DeepFace Error: {e}")

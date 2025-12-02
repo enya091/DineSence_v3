@@ -55,17 +55,18 @@ class DatabaseManager:
             )
         ''')
 
-        # 3. [NEW] 事件影像佐證表 (新增功能)
+        # 3. [修改] 事件影像佐證表 (增加 food_label)
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS event_evidence (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 session_timestamp TEXT,
                 event_type TEXT,
                 local_path TEXT UNIQUE,
-                human_corrected INTEGER DEFAULT 1
+                human_corrected INTEGER DEFAULT 1,
+                food_label TEXT  -- ★ [NEW] 新增這個欄位來存 "漢堡"
             )
         ''')
-
+        
         conn.commit()
         conn.close()
 
@@ -186,27 +187,32 @@ class DatabaseManager:
     # Part 3: 影像佐證功能 (新增)
     # ==========================================
     
-    def save_event_evidence(self, session_id, event_type, local_path):
+    def save_event_evidence(self, session_id, event_type, local_path, food_label=None):
         conn = self.get_connection()
         cursor = conn.cursor()
         try:
+            # [修改] 寫入 food_label
             cursor.execute('''
-                INSERT INTO event_evidence (session_timestamp, event_type, local_path)
-                VALUES (?, ?, ?)
-            ''', (session_id, event_type, local_path))
+                INSERT INTO event_evidence (session_timestamp, event_type, local_path, food_label)
+                VALUES (?, ?, ?, ?)
+            ''', (session_id, event_type, local_path, food_label))
             conn.commit()
-        except Exception:
-            pass
+        except Exception as e:
+            print(f"DB Save Evidence Error: {e}") # 加印錯誤訊息方便除錯
         finally:
             conn.close()
 
     def get_event_evidence(self, session_id, event_type=None):
         conn = self.get_connection()
         params = [session_id]
-        query = "SELECT id, event_type, local_path, human_corrected FROM event_evidence WHERE session_timestamp = ?"
+        
+        # ★★★ [修改] 在 SELECT 中加入 food_label ★★★
+        query = "SELECT id, event_type, local_path, human_corrected, food_label FROM event_evidence WHERE session_timestamp = ?"
+        
         if event_type:
             query += " AND event_type = ?"
             params.append(event_type)
+            
         df = pd.read_sql_query(query, conn, params=params)
         conn.close()
         return df

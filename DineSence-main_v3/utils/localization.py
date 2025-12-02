@@ -55,6 +55,10 @@ TRANSLATIONS = {
         "tab_plate": "🍽️ 餐盤洞察",
         "tab_report": "🤖 總結報告",
         "metric_groups": "總客組數",
+        # ★ [NEW] 新增第五個 Tab 的標題
+        "tab_global_insight": "📊 總體數據洞察", 
+        
+        "btn_gen_insight_report": "✨ 生成總體菜色洞察報告 (LLM)",
         "metric_avg_size": "平均單組人數",
         "metric_sessions": "分析場次",
         "metric_nods": "😊 滿意點頭",
@@ -117,6 +121,8 @@ TRANSLATIONS = {
         "tab_satisfaction": "😊 Satisfaction",
         "tab_plate": "🍽️ Plate Insights",
         "tab_report": "🤖 AI Report",
+        "tab_global_insight": "📊 Global Insights",
+        "btn_gen_insight_report": "✨ Generate Global Food Report",
         "metric_groups": "Total Groups",
         "metric_avg_size": "Avg Group Size",
         "metric_sessions": "Total Sessions",

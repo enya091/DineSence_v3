@@ -245,3 +245,67 @@ async def summarize_session(stats: dict,
         error_msg = f"生成摘要時發生錯誤：{e}"
         print(f"摘要生成 API 錯誤: {e}")
         return error_msg, None
+    
+async def identify_food_item(plate_bgr, menu_items: list, client: AsyncOpenAI, model="gpt-4o"):
+    """
+    針對強烈情緒觸發的快照，進行高精準度的食物辨識。
+    
+    Args:
+        plate_bgr: OpenCV 格式的影像 (BGR)
+        menu_items: 候選菜單列表 (例如 ["漢堡", "雞塊", "薯條"])
+        client: OpenAI Client
+        model: 建議使用 gpt-4o 以獲得最佳視覺辨識能力
+        
+    Returns:
+        str: 辨識出的食物名稱 (例如 "漢堡")，若失敗則回傳 "Unknown"
+    """
+    if plate_bgr is None: return "Unknown"
+    if client is None: return "No_API_Key"
+
+    # 1. 圖片轉 Base64
+    pil_img = Image.fromarray(cv2.cvtColor(plate_bgr, cv2.COLOR_BGR2RGB))
+    b64_img = _image_to_base64(pil_img)
+
+    # 2. 準備選單字串 (確保有 Other 選項)
+    safe_menu = menu_items.copy()
+    if "其他" not in safe_menu and "Other" not in safe_menu:
+        safe_menu.append("Other")
+    
+    options_str = ", ".join(safe_menu)
+    
+    # 3. 建構 Prompt (要求精簡回答)
+    prompt = (
+        f"請觀察這張餐盤照片，並從以下清單中選出最符合的食物名稱：\n"
+        f"清單：[{options_str}]\n"
+        "請直接回傳該名稱，不要加任何標點符號或額外文字(例如不要回傳 '是漢堡'，只要回傳 '漢堡')。\n"
+        "如果完全看不出來、空盤或不在清單中，請回傳 'Other'。"
+    )
+
+    try:
+        resp = await client.chat.completions.create(
+            model=model,
+            messages=[{
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": prompt},
+                    {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{b64_img}"}},
+                ],
+            }],
+            temperature=0.1, # 低隨機性，確保答案穩定
+            max_tokens=20
+        )
+        
+        # 4. 取得結果
+        text = resp.choices[0].message.content.strip()
+        
+        # 簡單防呆：確保回傳的文字真的在我們的清單裡
+        # (有時候 LLM 會回傳 "應該是漢堡"，我們只要 "漢堡")
+        for item in safe_menu:
+            if item in text:
+                return item
+                
+        return text # 如果都沒對到，就回傳原始答案 (通常是 Other)
+
+    except Exception as e:
+        print(f"Food ID Error: {e}")
+        return "Error"

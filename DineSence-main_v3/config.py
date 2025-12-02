@@ -18,6 +18,15 @@ LLM_MODEL_SUMMARY = "gpt-4o-mini"
 # ---------------------
 # Camera Setting
 # ---------------------
+# 鏡頭設定
+# 建議：0 通常是內建鏡頭 (Face)，1 通常是外接 USB 鏡頭 (Plate)
+CAMERA_INDEX_FACE = 0   
+CAMERA_INDEX_PLATE = 1
+
+# 解析度可以分開設定，例如餐盤需要高畫質看細節，人臉只需要 720p
+FACE_CAM_RES = (1280, 720)
+PLATE_CAM_RES = (1920, 1080)
+
 CAMERA_RESOLUTION_WIDTH = 1280
 CAMERA_RESOLUTION_HEIGHT = 720
 CAMERA_BUFFER_SIZE = 2

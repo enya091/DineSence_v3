@@ -56,14 +56,22 @@ class LiveAnalyzer:
         self.menu_items = menu_items
         self.analysis_options = analysis_options
         
-        self._frame_display_queue = Queue(maxsize=1)
-        self._frame_analysis_queue = Queue(maxsize=1)
+        self._face_display_queue = Queue(maxsize=1)
+        self._face_analysis_queue = Queue(maxsize=1)
+        
+        self._plate_display_queue = Queue(maxsize=1)
+        self._plate_analysis_queue = Queue(maxsize=1)
+        
+        # 結果佇列維持一個，因為我們要合併結果傳給 UI
         self._analysis_result_queue = Queue(maxsize=1)
 
         self.gesture_detector = HeadGestureDetector()
 
         self._stop_event = threading.Event()
-        self._camera_thread = None
+        
+        # [修改] 準備兩個相機執行緒
+        self._face_cam_thread = None
+        self._plate_cam_thread = None
         self._worker_thread = None
         
         self.db_manager = db_manager
@@ -92,55 +100,90 @@ class LiveAnalyzer:
         self._latched_emotion = None
         self._latch_lock = threading.Lock()
 
+        # 人臉相關狀態
+        self._current_people_count = 0
+        
+        # 餐盤相關狀態
+        self._cached_plate_label = None
+        self._cached_plate_ratio = None
+        self._cached_plate_circle = None
+        self._cached_food_detections = []
+        
+        # 輔助變數
+        self._frame_count = 0
+        self._last_debug_print_ts = 0
+        self._cross_capture_signal = None
+        
+
     # -------------------------------------------------
     #  執行緒 1：攝影機
     # -------------------------------------------------
-    def _camera_loop(self):
+    def _open_camera(self, index, width, height):
         system_os = platform.system()
-        print(f"📷 正在啟動攝影機... (偵測系統: {system_os})")
-
+        print(f"📷 正在開啟鏡頭 ID {index} (系統: {system_os})...")
         cap = None
-        # 1. 根據系統選擇開啟方式
-        if system_os == "Darwin": # macOS
-             cap = cv2.VideoCapture(CAMERA_INDEX, cv2.CAP_AVFOUNDATION)
-        elif system_os == "Windows": # Windows
-             # Windows 優先使用 DSHOW
-             cap = cv2.VideoCapture(CAMERA_INDEX, cv2.CAP_DSHOW)
         
-        # 2. 如果失敗，退回預設
+        if system_os == "Darwin": # macOS
+             cap = cv2.VideoCapture(index, cv2.CAP_AVFOUNDATION)
+        elif system_os == "Windows": # Windows
+             cap = cv2.VideoCapture(index, cv2.CAP_DSHOW)
+        
         if cap is None or not cap.isOpened():
-            print("⚠️ 專屬模式開啟失敗，嘗試預設模式...")
-            cap = cv2.VideoCapture(CAMERA_INDEX)
+            cap = cv2.VideoCapture(index) # 失敗退回預設
 
-        if cap is None or not cap.isOpened():
-            print("❌ 無法開啟攝影機 (請檢查連接或是被其他程式佔用)")
-            return
+        if cap.isOpened():
+            cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
+            cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
+            
+        return cap
 
-        cap.set(cv2.CAP_PROP_FRAME_WIDTH, CAMERA_RESOLUTION_WIDTH)
-        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, CAMERA_RESOLUTION_HEIGHT)
-
+    # [修改] 人臉鏡頭迴圈 (筆電鏡頭)
+    def _face_cam_loop(self):
+        # 假設 0 是筆電鏡頭，解析度 1280x720
+        cap = self._open_camera(0, 1280, 720) 
+        
         while not self._stop_event.is_set():
             ok, frame = cap.read()
             if not ok:
-                time.sleep(0.01)
-                continue
+                time.sleep(0.1); continue
 
-            # 放入顯示佇列
-            if self._frame_display_queue.full():
-                try: self._frame_display_queue.get_nowait()
+            # 放入 Face 的佇列
+            if self._face_display_queue.full(): 
+                try: self._face_display_queue.get_nowait()
                 except Empty: pass
-            self._frame_display_queue.put_nowait(frame)
+            self._face_display_queue.put_nowait(frame)
 
-            # 放入分析佇列
-            if self._frame_analysis_queue.full():
-                try: self._frame_analysis_queue.get_nowait()
+            if self._face_analysis_queue.full():
+                try: self._face_analysis_queue.get_nowait()
                 except Empty: pass
-            self._frame_analysis_queue.put_nowait(frame)
+            self._face_analysis_queue.put_nowait(frame)
             
-            time.sleep(0.005) 
-            
-        cap.release()
-        print("📷 攝影機已釋放")
+            time.sleep(0.005)
+        if cap: cap.release()
+
+    # [修改] 餐盤鏡頭迴圈 (外接鏡頭)
+    def _plate_cam_loop(self):
+        # 假設 1 是外接鏡頭，解析度可以用高一點例如 1920x1080 看清楚食物
+        cap = self._open_camera(1, 1920, 1080)
+        
+        while not self._stop_event.is_set():
+            ok, frame = cap.read()
+            if not ok:
+                time.sleep(0.1); continue
+
+            # 放入 Plate 的佇列
+            if self._plate_display_queue.full():
+                try: self._plate_display_queue.get_nowait()
+                except Empty: pass
+            self._plate_display_queue.put_nowait(frame)
+
+            if self._plate_analysis_queue.full():
+                try: self._plate_analysis_queue.get_nowait()
+                except Empty: pass
+            self._plate_analysis_queue.put_nowait(frame)
+
+            time.sleep(0.005)
+        if cap: cap.release()
 
     def _save_evidence(self, event_type, frame, frame_count):
         try:
@@ -157,145 +200,218 @@ class LiveAnalyzer:
         except Exception as e:
             print(f"Evidence Save Error: {e}")
 
+    def _process_face_task(self, frame, result):
+        """處理人臉鏡頭的邏輯：人數、動作、表情"""
+        face_detector = self.model_pack.get("face_detector")
+        pose_detector = self.model_pack.get("pose_detector")
+        
+        # (A) 計算人數
+        if face_detector:
+            try:
+                small_frame = cv2.resize(frame, (0, 0), fx=0.5, fy=0.5)
+                rgb_frame = cv2.cvtColor(small_frame, cv2.COLOR_BGR2RGB)
+                face_results = face_detector.process(rgb_frame)
+                self._current_people_count = len(face_results.detections) if face_results.detections else 0
+            except Exception: pass
+        
+        result.display_info["people_count"] = self._current_people_count
+
+        # (B) 點頭/搖頭偵測
+        if self.analysis_options.get("opt_nod") and pose_detector:
+            try:
+                small_frame = cv2.resize(frame, (0, 0), fx=0.5, fy=0.5)
+                rgb = cv2.cvtColor(small_frame, cv2.COLOR_BGR2RGB)
+                res = pose_detector.process(rgb)
+                if res.pose_landmarks:
+                    lm = res.pose_landmarks.landmark
+                    dx = lm[0].x - (lm[7].x + lm[8].x + lm[11].x + lm[12].x) / 4.0
+                    dy = lm[0].y - (lm[7].y + lm[8].y + lm[11].y + lm[12].y) / 4.0
+                    
+                    event = self.gesture_detector.update_and_classify(dx, dy)
+                    
+                    if event == "nod":
+                        with self._latch_lock: self._latched_nod = True
+                        self._save_evidence("nod", frame.copy(), self._frame_count)
+                    elif event == "shake":
+                        with self._latch_lock: self._latched_shake = True
+                        self._save_evidence("shake", frame.copy(), self._frame_count)
+            except Exception: pass
+
+        # (C) 情緒偵測 (觸發背景執行緒)
+        now = time.time()
+        if (self.analysis_options.get("opt_emote") and 
+            DeepFace is not None and 
+            not self._llm_busy and 
+            (now - self._last_emote_ts) > EMOTE_INTERVAL_SECONDS):
+            
+            self._llm_busy = True
+            self._last_emote_ts = now
+            threading.Thread(target=self._run_deepface_background, 
+                             args=(frame.copy(), face_detector)).start()
     # -------------------------------------------------
+
+    def _process_plate_task(self, frame, result, client):
+        """處理餐盤鏡頭的邏輯：剩食計算、VLM 觸發"""
+        if not self.analysis_options.get("opt_plate"):
+            return
+
+        # (A) 基礎演算法 (每 15 幀更新一次快取)
+        if self._frame_count % 15 == 0:
+            try:
+                label, ratio, circle = estimate_plate_leftover(frame)
+                if label in ["剩餘50%以上", "無剩餘"]:
+                    self._cached_plate_label = label
+                    self._cached_plate_ratio = ratio 
+                else:
+                    self._cached_plate_label = None 
+                    self._cached_plate_ratio = None
+                self._cached_plate_circle = circle
+                self._cached_food_detections = detect_food_regions_yolo(frame)
+            except Exception: pass
+        
+        # 填入 Result
+        if self._cached_plate_label:
+            result.plate_event = self._cached_plate_label 
+            display_text = f"{self._cached_plate_label} ({self._cached_plate_ratio:.0%})" \
+                           if self._cached_plate_ratio else self._cached_plate_label
+            result.display_info["plate_label"] = display_text
+
+        if self._cached_plate_circle: 
+            result.display_info["plate_circle"] = self._cached_plate_circle
+        
+        result.display_info["food_detections"] = self._cached_food_detections
+
+        # (B) VLM 觸發判斷
+        now = time.time()
+        should_trigger = (self._cached_plate_label is not None or len(self._cached_food_detections) > 0)
+        is_cooldown = (now - self._last_vlm_ts) < VLM_INTERVAL_SECONDS
+        
+        # Debug 訊息
+        if should_trigger and (now - self._last_debug_print_ts > 3.0):
+            if not client: print("⚠️ [VLM Warning] 未設定 OpenAI API Key")
+            elif self._vlm_busy: print("⏳ [VLM Skip] 系統忙碌中")
+            self._last_debug_print_ts = now
+
+        if should_trigger and client and not self._vlm_busy and not is_cooldown:
+            self._vlm_busy = True 
+            self._last_vlm_ts = now 
+            print(f"🚀 VLM 觸發成功!")
+            self._save_evidence("plate_vlm", frame.copy(), self._frame_count)
+            threading.Thread(target=self._run_vlm_background, 
+                             args=(frame.copy(), client, self._cached_food_detections)).start()
+            
+    def _sync_log_task(self):
+        """檢查並執行資料同步儲存"""
+        now = time.time()
+        if (now - self._last_log_ts) > LOG_INTERVAL_SECONDS: 
+            # 只有當有人或有餐盤狀態時才紀錄
+            if self._current_people_count > 0 or self._cached_plate_label:
+                
+                emotions_data = {self._cached_emotion: 1.0} if self._cached_emotion else {}
+                food_data = self._cached_plate_label if self._cached_plate_label else "無"
+
+                try:
+                    insert_log(
+                        source_type="live_dual_cam",
+                        people_count=self._current_people_count,
+                        emotions=emotions_data,
+                        food_detected=food_data
+                    )
+                    self._last_log_ts = now
+                except Exception as e: 
+                    print(f"Log Error: {e}")
+
+    # [新增] 輔助函式：存檔用 (放在類別內)
+    def _save_custom_file(self, filename, frame):
+        try:
+            path = os.path.join(EVIDENCE_DIR, filename)
+            cv2.imwrite(path, frame)
+            return path
+        except Exception: return None
+
     #  執行緒 2：CV 分析
     # -------------------------------------------------
     def _analysis_worker(self):
         client = self.model_pack.get("client")
-        pose_detector = self.model_pack.get("pose_detector")
-        face_detector = self.model_pack.get("face_detector")
-        detector = self.gesture_detector
-        frame_count = 0
         
-        cached_plate_label = None
-        cached_plate_ratio = None 
-        cached_plate_circle = None
-        cached_food_dets = [] 
-
-        last_debug_print_ts = 0 
-
         while not self._stop_event.is_set():
-            try:
-                frame = self._frame_analysis_queue.get(timeout=0.5) # 縮短 timeout
-            except Empty:
-                continue
+            # 1. 獲取畫面
+            face_frame = None
+            plate_frame = None
+            try: face_frame = self._face_analysis_queue.get_nowait()
+            except Empty: pass
+            try: plate_frame = self._plate_analysis_queue.get_nowait()
+            except Empty: pass
 
-            result = AnalysisResult()
-            frame_count += 1
+            if face_frame is None and plate_frame is None:
+                time.sleep(0.005); continue
 
-            # 人數計算
-            current_people_count = 0
-            if face_detector:
-                try:
-                    small_frame = cv2.resize(frame, (0, 0), fx=0.5, fy=0.5)
-                    rgb_frame = cv2.cvtColor(small_frame, cv2.COLOR_BGR2RGB)
-                    face_results = face_detector.process(rgb_frame)
-                    if face_results.detections:
-                        current_people_count = len(face_results.detections)
-                except Exception: pass
+            result = AnalysisResult() 
+            self._frame_count += 1
+
+            # 2. 執行任務 (模組化)
+            if face_frame is not None:
+                self._process_face_task(face_frame, result)
             
-            result.display_info["people_count"] = current_people_count
+            if plate_frame is not None:
+                self._process_plate_task(plate_frame, result, client)
 
-            # (A) 點頭/搖頭
-            if self.analysis_options.get("opt_nod") and pose_detector:
-                try:
-                    small_frame = cv2.resize(frame, (0, 0), fx=0.5, fy=0.5)
-                    rgb = cv2.cvtColor(small_frame, cv2.COLOR_BGR2RGB)
-                    res = pose_detector.process(rgb)
-                    if res.pose_landmarks:
-                        lm = res.pose_landmarks.landmark
-                        dx = lm[0].x - (lm[7].x + lm[8].x + lm[11].x + lm[12].x) / 4.0
-                        dy = lm[0].y - (lm[7].y + lm[8].y + lm[11].y + lm[12].y) / 4.0
-                        event = detector.update_and_classify(dx, dy)
-                        
-                        if event == "nod":
-                            with self._latch_lock: self._latched_nod = True
-                            self._save_evidence("nod", frame.copy(), frame_count)
-                        elif event == "shake":
-                            with self._latch_lock: self._latched_shake = True
-                            self._save_evidence("shake", frame.copy(), frame_count)
-                except Exception: pass
-
-            # (B) 餐盤偵測
-            if self.analysis_options.get("opt_plate"):
-                if frame_count % 15 == 0:
+            # =========================================================
+            # ★★★ [新增] 處理強烈情緒的「雙鏡頭連拍」 ★★★
+            # =========================================================
+            if self._cross_capture_signal:
+                signal = self._cross_capture_signal
+                self._cross_capture_signal = None # 重置訊號，避免重複拍
+                
+                if face_frame is not None and plate_frame is not None:
                     try:
-                        label, ratio, circle = estimate_plate_leftover(frame)
-                        if label in ["剩餘50%以上", "無剩餘"]:
-                            cached_plate_label = label
-                            cached_plate_ratio = ratio 
-                        else:
-                            cached_plate_label = None 
-                            cached_plate_ratio = None
-                        cached_plate_circle = circle
-                        cached_food_dets = detect_food_regions_yolo(frame)
-                        self._cached_food_detections = cached_food_dets
-                    except Exception: pass
-                
-                if cached_plate_label:
-                    result.plate_event = cached_plate_label 
-                    display_text = f"{cached_plate_label} ({cached_plate_ratio:.0%})" if cached_plate_ratio else cached_plate_label
-                    result.display_info["plate_label"] = display_text
+                        now = datetime.now()
+                        readable_ts = now.strftime("%m月%d日_%H點%M分%S秒")
+                        
+                        # [修改] 組合新檔名資訊
+                        # 格式: 11月30日_..._開心-98_驚艷-02_Face.jpg
+                        # 使用 "-" 連接分數，避免與 "_" 衝突
+                        e1_name, e1_score = signal["top1"]
+                        e2_name, e2_score = signal["top2"]
+                        
+                        emo_tag_1 = f"{e1_name}-{int(e1_score)}"
+                        emo_tag_2 = f"{e2_name}-{int(e2_score)}"
+                        
+                        # 1. 存人臉
+                        face_filename = f"{readable_ts}_{emo_tag_1}_{emo_tag_2}_Face.jpg"
+                        face_path = self._save_custom_file(face_filename, face_frame)
+                        
+                        # 2. 存餐盤 (為了對照方便，餐盤檔名維持簡單，或也加上詳細資訊皆可)
+                        # 這裡我們讓餐盤也帶上一樣的詳細資訊，方便對應
+                        plate_filename = f"{readable_ts}_{emo_tag_1}_{emo_tag_2}_Plate.jpg"
+                        plate_path = self._save_custom_file(plate_filename, plate_frame)
+                        
+                        # 3. 寫入資料庫
+                        if face_path:
+                            self.db_manager.save_event_evidence(self.session_id, "strong_emotion_face", face_path)
+                        if plate_path:
+                            self.db_manager.save_event_evidence(self.session_id, "strong_emotion_plate", plate_path)
+                            
+                    except Exception as e:
+                        print(f"Snapshot Error: {e}")
+            # =========================================================
 
-                if cached_plate_circle: result.display_info["plate_circle"] = cached_plate_circle
-                result.display_info["food_detections"] = cached_food_dets
-
-                # VLM 觸發
-                now = time.time()
-                should_trigger = (cached_plate_label is not None or len(cached_food_dets) > 0)
-                is_cooldown = (now - self._last_vlm_ts) < VLM_INTERVAL_SECONDS
-                
-                if should_trigger and (now - last_debug_print_ts > 3.0):
-                    if not client: print("⚠️ [VLM Warning] 未設定 OpenAI API Key")
-                    elif self._vlm_busy: print("⏳ [VLM Skip] 系統忙碌中")
-                    last_debug_print_ts = now
-
-                if should_trigger and client and not self._vlm_busy and not is_cooldown:
-                    self._vlm_busy = True 
-                    self._last_vlm_ts = now 
-                    print(f"🚀 VLM 觸發成功!")
-                    self._save_evidence("plate_vlm", frame.copy(), frame_count)
-                    threading.Thread(target=self._run_vlm_background, 
-                                     args=(frame.copy(), client, cached_food_dets)).start()
-
-            # (C) DeepFace 表情 (使用全域 DeepFace)
-            now = time.time()
-            if (self.analysis_options.get("opt_emote") and 
-                DeepFace is not None and  # 確保模組有載入
-                not self._llm_busy and (now - self._last_emote_ts) > EMOTE_INTERVAL_SECONDS):
-                
-                self._llm_busy = True
-                self._last_emote_ts = now
-                threading.Thread(target=self._run_deepface_background, 
-                                 args=(frame.copy(), face_detector)).start()
-
-            if self._cached_plate_insight: result.plate_insight = self._cached_plate_insight
+            # 3. 處理異步回傳的資料
+            if self._cached_plate_insight: 
+                result.plate_insight = self._cached_plate_insight
             if self._cached_token_usage:
                 result.token_usage_event = self._cached_token_usage
                 self._cached_token_usage = None 
 
-            # 自動記錄 Log
-            now = time.time()
-            if (now - self._last_log_ts) > LOG_INTERVAL_SECONDS: 
-                if current_people_count > 0 or cached_plate_label:
-                    emotions_data = {self._cached_emotion: 1.0} if self._cached_emotion else {}
-                    try:
-                        insert_log(
-                            source_type="live_stream",
-                            people_count=current_people_count,
-                            emotions=emotions_data,
-                            food_detected=cached_plate_label if cached_plate_label else "無"
-                        )
-                        self._last_log_ts = now
-                    except Exception: pass
+            # 4. 同步儲存 Log
+            self._sync_log_task()
             
-            # 推送結果
+            # 5. 推送結果
             if self._analysis_result_queue.full():
                 try: self._analysis_result_queue.get_nowait()
                 except Empty: pass
             self._analysis_result_queue.put_nowait(result)
             
-            # ★★★ 優化 2：微小延遲讓出 CPU，解決畫面卡頓 ★★★
             time.sleep(0.005)
 
     def _run_vlm_background(self, frame, client, food_detections):
@@ -320,11 +436,11 @@ class LiveAnalyzer:
             self._vlm_busy = False 
 
     def _run_deepface_background(self, frame, face_detector):
-        # 這裡不需再 import DeepFace，直接使用全域變數
         try:
             face_crop = crop_face_with_mediapipe(frame, face_detector)
             if face_crop is None: return
 
+            # 1. 執行分析
             analysis = DeepFace.analyze(
                 img_path=face_crop, 
                 actions=['emotion'], 
@@ -332,42 +448,83 @@ class LiveAnalyzer:
                 detector_backend='skip', 
                 silent=True
             )
-            dominant = analysis[0]['dominant_emotion']
+            
+            result = analysis[0]
+            emotions_dict = result['emotion'] # 取得所有情緒的分數字典
+            
+            # 排序：由高到低 [(emotion, score), ...]
+            sorted_emotions = sorted(emotions_dict.items(), key=lambda item: item[1], reverse=True)
+            
+            # 第一名
+            top1_name = sorted_emotions[0][0]
+            top1_score = sorted_emotions[0][1]
+            
+            # 第二名 (以防萬一只有一個，做個檢查)
+            top2_name = sorted_emotions[1][0] if len(sorted_emotions) > 1 else "neutral"
+            top2_score = sorted_emotions[1][1] if len(sorted_emotions) > 1 else 0.0
+
+            # 3. 中文映射 (Mapping)
             mapping = {
                 "happy": "開心", "neutral": "平淡", "sad": "失望", 
                 "angry": "不滿", "surprise": "驚艷", "fear": "困惑", "disgust": "嫌棄"
             }
-            final_emotion = mapping.get(dominant, dominant)
+            top1_zh = mapping.get(top1_name, top1_name)
+            top2_zh = mapping.get(top2_name, top2_name)
 
-            # 同步更新快取 (給 DB/圖表) 和 鎖定 (給 UI 日誌)
-            self._cached_emotion = final_emotion 
-            with self._latch_lock:
-                self._latched_emotion = final_emotion 
+            # 更新快取
+            self._cached_emotion = top1_zh 
+            
+            # 4. [修改] 強烈情緒觸發邏輯
+            # 條件：第一名不是平淡，且分數 > 75%
+            INTENSITY_THRESHOLD = 75.0 
+            
+            if top1_name != "neutral" and top1_score > INTENSITY_THRESHOLD:
+                print(f"🔥 強烈情緒: {top1_zh}({top1_score:.0f}%) / {top2_zh}({top2_score:.0f}%)")
                 
-            print(f"✅ 情緒偵測: {final_emotion}")
+                # 發送訊號：傳遞更完整的資訊
+                self._cross_capture_signal = {
+                    "top1": (top1_zh, top1_score), # ("開心", 98.5)
+                    "top2": (top2_zh, top2_score)  # ("驚艷", 2.1)
+                }
 
+            # Log 鎖定 (保持不變)
+            with self._latch_lock:
+                self._latched_emotion = top1_zh 
+                
         except Exception as e:
             print(f"DeepFace Error: {e}")
         finally:
             self._llm_busy = False
 
     def start(self):
-        if self._camera_thread and self._camera_thread.is_alive(): return
+        if self._face_cam_thread and self._face_cam_thread.is_alive(): return
         self._stop_event.clear()
-        self._camera_thread = threading.Thread(target=self._camera_loop, daemon=True)
+        
+        # [修改] 啟動兩個相機執行緒 + 一個分析執行緒
+        self._face_cam_thread = threading.Thread(target=self._face_cam_loop, daemon=True)
+        self._plate_cam_thread = threading.Thread(target=self._plate_cam_loop, daemon=True)
         self._worker_thread = threading.Thread(target=self._analysis_worker, daemon=True)
-        self._camera_thread.start()
+        
+        self._face_cam_thread.start()
+        self._plate_cam_thread.start()
         self._worker_thread.start()
 
     def stop(self):
         self._stop_event.set()
         time.sleep(0.5)
-        self._camera_thread = None
+        self._face_cam_thread = None
+        self._plate_cam_thread = None
         self._worker_thread = None
 
-    def get_latest_frame(self):
-        try: return self._frame_display_queue.get_nowait()
-        except Empty: return None
+    # [修改] 回傳兩張圖 (Face, Plate)
+    def get_latest_frames(self):
+        f_frame = None
+        p_frame = None
+        try: f_frame = self._face_display_queue.get_nowait()
+        except Empty: pass
+        try: p_frame = self._plate_display_queue.get_nowait()
+        except Empty: pass
+        return f_frame, p_frame
 
     @property
     def raw_session_id(self): return self.session_id

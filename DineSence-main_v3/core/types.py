@@ -13,18 +13,20 @@ import numpy as np
 
 @dataclass
 class AnalysisResult:
-    """
-    【新版】用於存放單次背景分析結果的「純數據」結構。
-    這個物件不包含影像，只包含分析出的事件和資訊，
-    會在背景的分析執行緒和主執行緒之間傳遞。
-    """
-    # --- 分析出的「事件」(Event) ---
-    # 這些是用於觸發主執行緒中計數器更新的信號
-    nod_event: bool = False
-    emotion_event: str = ""
-    plate_event: str = ""
-    token_usage_event: Optional[Dict[str, Any]] = None
-    
-    # --- 顯示在畫面上的「資訊」(Info) ---
-    # 這些是純粹用來繪製在畫面上的文字或圖形座標
-    display_info: Dict = field(default_factory=dict)
+    def __init__(self):
+        # 既有的欄位
+        self.nod_event = False
+        self.shake_event = False
+        self.emotion_event = None
+        self.plate_event = None
+        
+        # ★★★ 新增這兩個缺少的欄位 ★★★
+        self.plate_insight = None      # 修正 AttributeError
+        self.token_usage_event = None  # 避免未來報錯
+        
+        self.display_info = {
+            "people_count": 0,
+            "plate_label": "",
+            "plate_circle": None,
+            "food_detections": []
+        }

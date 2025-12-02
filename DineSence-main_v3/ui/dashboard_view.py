@@ -60,6 +60,135 @@ def _render_evidence_grid(db_manager, session_id, event_type):
             with col:
                 st.warning(f"MISSING {evidence_id}")
 
+def _render_comparison_gallery(db_manager, session_id):
+    """
+    [NEW] 強烈情緒交叉比對畫廊
+    邏輯：找出同一時間點的 Face 與 Plate 照片，並排顯示。
+    """
+    # 1. 撈出該 Session 所有強烈情緒相關的證據
+    df_face = db_manager.get_event_evidence(session_id, "strong_emotion_face")
+    df_plate = db_manager.get_event_evidence(session_id, "strong_emotion_plate")
+    
+    if df_face.empty and df_plate.empty:
+        st.info("尚未偵測到強烈情緒事件 (Confidence > 50%)")
+        return
+
+    # 2. 進行配對 (Pairing)
+    # 我們利用檔名中的時間戳記 (例如 "11月30日_12點01分05秒") 來配對
+    pairs = {} 
+    
+    # 處理臉部照片
+    for _, row in df_face.iterrows():
+        path = row['local_path']
+        filename = os.path.basename(path)
+        
+        # 修正後的解析邏輯
+        parts = filename.split('_')
+        # 取前兩段當作唯一的時間 Key (月日_時分秒)
+        key = f"{parts[0]}_{parts[1]}"
+        
+        # 取得主要情緒名稱 (移除分數)
+        raw_emo = parts[2] # "開心-98"
+        emo_label = raw_emo.split('-')[0] # "開心"
+
+        if key not in pairs: pairs[key] = {}
+        pairs[key]['face'] = path
+        pairs[key]['emotion'] = emo_label
+        pairs[key]['time'] = parts[1] # 顯示時間
+
+    # 處理餐盤照片
+    for _, row in df_plate.iterrows():
+        path = row['local_path']
+        filename = os.path.basename(path)
+        parts = filename.split('_')
+        key = f"{parts[0]}_{parts[1]}"
+        
+        if key not in pairs: pairs[key] = {}
+        pairs[key]['plate'] = path
+
+    # 3. 渲染 UI (由新到舊排序)
+    sorted_keys = sorted(pairs.keys(), reverse=True)
+    
+    for key in sorted_keys:
+        item = pairs[key]
+        face_path = item.get('face')
+        plate_path = item.get('plate')
+        emotion_label = item.get('emotion', 'Unknown')
+        time_label = item.get('time', '')
+
+        # 卡片式佈局
+        with st.container(border=True):
+            # 標題列：顯示情緒與時間
+            st.markdown(f"#### 🔥 {emotion_label} <span style='font-size:0.8em; color:gray'>({time_label})</span>", unsafe_allow_html=True)
+            
+            c1, c2 = st.columns(2)
+            
+            # 左邊：表情
+            with c1:
+                st.caption("👤 顧客表情")
+                if face_path and os.path.exists(face_path):
+                    st.image(face_path, use_container_width=True)
+                else:
+                    st.warning("影像遺失")
+            
+            # 右邊：餐盤
+            with c2:
+                st.caption("🍽️ 當下餐盤")
+                if plate_path and os.path.exists(plate_path):
+                    st.image(plate_path, use_container_width=True)
+                else:
+                    st.warning("影像遺失")
+
+def _render_all_emotions_gallery(db_manager, session_id):
+    """
+    [NEW] 顯示所有偵測到的情緒照片 (含 Top 2 分數)
+    """
+    df = db_manager.get_event_evidence(session_id, "strong_emotion_face")
+    
+    if df.empty:
+        st.info("尚無情緒紀錄")
+        return
+
+    # 使用 Grid 佈局
+    cols = st.columns(4)
+    
+    for i, row in df.iterrows():
+        path = row['local_path']
+        if not os.path.exists(path): continue
+            
+        filename = os.path.basename(path)
+        # 解析檔名: 時間_情緒1-分數_情緒2-分數_Face.jpg
+        try:
+            parts = filename.split('_')
+            # parts[0]: 日期, parts[1]: 時間
+            time_str = f"{parts[1]}" 
+            
+            # 解析情緒 1 (例如 "開心-98")
+            e1_part = parts[2].split('-')
+            e1_label = e1_part[0]
+            e1_score = e1_part[1]
+            
+            # 解析情緒 2 (例如 "驚艷-02")
+            # 舊的檔案可能沒有第二情緒，要做防呆
+            if len(parts) >= 5:
+                e2_part = parts[3].split('-')
+                e2_label = e2_part[0]
+                e2_score = e2_part[1]
+                caption_text = f"🥇{e1_label}({e1_score}%) | 🥈{e2_label}({e2_score}%)"
+            else:
+                caption_text = f"🥇{e1_label}({e1_score}%)"
+                
+        except:
+            # 解析失敗 (可能是舊檔案)
+            time_str = "Unknown"
+            caption_text = "Legacy Data"
+
+        col = cols[i % 4]
+        with col:
+            st.image(path, use_container_width=True)
+            st.caption(f"🕒 {time_str}")
+            st.markdown(f"**{caption_text}**")
+
 def display(client, db_manager, t=None): 
     # 防呆：如果沒傳 t (翻譯函式)，給一個預設的
     if t is None: 
@@ -126,11 +255,13 @@ def display(client, db_manager, t=None):
             
     # 2. 數據獲取邏輯
     if source_option == "Live":
-        selected_sources = ['live_stream', 'live_session_summary']
+        # [修改] 加入 'live_dual_cam'
+        selected_sources = ['live_stream', 'live_session_summary', 'live_dual_cam']
     elif source_option == "Video":
         selected_sources = ['uploaded_video']
     else:
-        selected_sources = ['live_stream', 'live_session_summary', 'uploaded_video']
+        # [修改] 加入 'live_dual_cam'
+        selected_sources = ['live_stream', 'live_session_summary', 'uploaded_video', 'live_dual_cam']
 
     df_logs = db.get_logs_by_range(start_dt_str, end_dt_str, source_types=selected_sources)
     num_groups, groups_df = db.get_customer_groups_analysis(start_dt_str, end_dt_str, gap_minutes=0.6)
@@ -213,7 +344,8 @@ def display(client, db_manager, t=None):
         
         df_emotions = df_logs[df_logs['source_type'].isin(['live_session_summary', 'uploaded_video'])]
         if df_emotions.empty:
-            df_emotions = df_logs[df_logs['source_type'] == 'live_stream']
+            # [修改] 這裡也要加入 'live_dual_cam'
+            df_emotions = df_logs[df_logs['source_type'].isin(['live_stream', 'live_dual_cam'])]
 
         with st.container(border=True):
             if not df_emotions.empty:
@@ -328,14 +460,16 @@ def display(client, db_manager, t=None):
                 unique_session_id = row['session_id_raw']
 
                 with st.expander(label, expanded=False):
-                    t1, t2, t3 = st.tabs(["🎥 NOD", "🎥 SHAKE", "🍽️ WASTE"])
+                    # ★★★ [修改] 增加第 5 個 Tab: ALL EMOTIONS ★★★
+                    t1, t2, t3, t4, t5 = st.tabs(["🎥 NOD", "🎥 SHAKE", "🍽️ WASTE", "🔥 CROSS-CHECK", "😊 ALL EMOTIONS"])
                     
-                    with t1:
-                        _render_evidence_grid(db, unique_session_id, 'nod')
-                    with t2:
-                        _render_evidence_grid(db, unique_session_id, 'shake')
-                    with t3:
-                        _render_evidence_grid(db, unique_session_id, 'plate_vlm')
-
+                    with t1: _render_evidence_grid(db, unique_session_id, 'nod')
+                    with t2: _render_evidence_grid(db, unique_session_id, 'shake')
+                    with t3: _render_evidence_grid(db, unique_session_id, 'plate_vlm')
+                    with t4: _render_comparison_gallery(db, unique_session_id)
+                    
+                    # [新增] 呼叫新函式
+                    with t5:
+                        _render_all_emotions_gallery(db, unique_session_id)
         else:
             st.info("NO DATA")

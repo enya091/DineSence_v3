@@ -5,6 +5,8 @@ __pycache__/
 
 # C extensions
 *.so
+session_evidence/
+session_evidence
 
 # Distribution / packaging
 .Python

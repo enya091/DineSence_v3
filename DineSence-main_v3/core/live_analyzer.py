@@ -213,7 +213,7 @@ class LiveAnalyzer:
         # (A) 計算人數
         if face_detector:
             try:
-                small_frame = cv2.resize(frame, (0, 0), fx=0.5, fy=0.5)
+                small_frame = cv2.resize(frame, (0, 0), fx=0.75, fy=0.75)
                 rgb_frame = cv2.cvtColor(small_frame, cv2.COLOR_BGR2RGB)
                 face_results = face_detector.process(rgb_frame)
                 self._current_people_count = len(face_results.detections) if face_results.detections else 0
@@ -224,7 +224,7 @@ class LiveAnalyzer:
         # (B) 點頭/搖頭偵測
         if self.analysis_options.get("opt_nod") and pose_detector:
             try:
-                small_frame = cv2.resize(frame, (0, 0), fx=0.5, fy=0.5)
+                small_frame = cv2.resize(frame, (0, 0), fx=0.75, fy=0.75)
                 rgb = cv2.cvtColor(small_frame, cv2.COLOR_BGR2RGB)
                 res = pose_detector.process(rgb)
                 if res.pose_landmarks:
@@ -511,8 +511,8 @@ class LiveAnalyzer:
             self._cached_emotion = top1_zh 
             
             # 4. 強烈情緒觸發邏輯
-            # 條件：第一名不是平淡，且分數 > 50% (您設定的值)
-            INTENSITY_THRESHOLD = 50.0 
+            # 條件：第一名不是平淡，且分數 > 40% (您設定的值)
+            INTENSITY_THRESHOLD = 40.0 
             
             if top1_name != "neutral" and top1_score > INTENSITY_THRESHOLD:
                 print(f"🔥 強烈情緒: {top1_zh}({top1_score:.0f}%) / {top2_zh}({top2_score:.0f}%)")

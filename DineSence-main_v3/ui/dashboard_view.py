@@ -496,8 +496,339 @@ def _render_all_emotions_gallery(db_manager, session_id):
             st.caption(f"🕒 {time_str}")
             st.markdown(f"**{caption_text}**")
 
+# ==========================================
+# [重構] 獨立的 Tab 渲染函式 (Function Components)
+# ==========================================
+
+def _render_tab_traffic(df_logs, num_groups, groups_df, df_sessions, t):
+    """Tab 1: 人流與翻桌狀況"""
+    c1, c2, c3 = st.columns(3)
+    avg_ppl = 0
+    if not df_logs.empty:
+        valid_ppl = df_logs[df_logs['people_count'] > 0]['people_count']
+        if not valid_ppl.empty:
+            avg_ppl = valid_ppl.mean()
+
+    c1.metric(t("metric_groups"), f"{num_groups}")
+    c2.metric(t("metric_avg_size"), f"{avg_ppl:.1f}")
+    c3.metric(t("metric_sessions"), len(df_sessions))
+
+    st.markdown(f"#### {t('chart_traffic')}")
+    with st.container(border=True):
+        if not df_logs.empty:
+            df_chart = df_logs.copy()
+            df_chart['timestamp'] = pd.to_datetime(df_chart['timestamp'])
+            df_chart = df_chart.set_index('timestamp')
+            flow_data = df_chart['people_count'].resample('5T').max().fillna(0)
+            st.area_chart(flow_data, color="#06b6d4", use_container_width=True)
+        else:
+            st.info("NO TRAFFIC DATA")
+    
+    if num_groups > 0:
+        with st.expander("DETAILS"):
+            st.dataframe(groups_df, use_container_width=True, hide_index=True)
+
+
+def _render_tab_satisfaction(df_sessions, df_logs, stats, t):
+    """Tab 2: 滿意度情緒分析"""
+    k1, k2, k3 = st.columns(3)
+    k1.metric(t("metric_nods"), int(stats['total_nods']))
+    k2.metric(t("metric_shakes"), int(stats['total_shakes']))
+    k3.metric(t("metric_waste"), f"{stats['waste_rate']:.1f}%")
+
+    st.divider()
+    st.markdown("#### 😊 EMOTION DISTRIBUTION")
+    
+    # 篩選出來源包含 'live_dual_cam' 的情緒數據
+    df_emotions = df_logs[df_logs['source_type'].isin(['live_session_summary', 'uploaded_video', 'live_dual_cam'])]
+
+    with st.container(border=True):
+        if not df_emotions.empty:
+            all_emotions = Counter()
+            data_found = False
+
+            for _, row in df_emotions.iterrows():
+                e_raw = row.get('emotions')
+                if pd.isna(e_raw) or e_raw == "":
+                    continue
+                try:
+                    e_dict = ast.literal_eval(str(e_raw)) if isinstance(e_raw, str) else e_raw
+                    if isinstance(e_dict, dict):
+                        for k, v in e_dict.items():
+                            if k not in ['Meal_Status', 'status']:
+                                try:
+                                    val = float(v) 
+                                    if val > 0:
+                                        all_emotions[k] += val
+                                        data_found = True
+                                except (ValueError, TypeError):
+                                    continue
+                except Exception:
+                    continue 
+
+            if data_found and all_emotions:
+                e_df = pd.DataFrame(all_emotions.items(), columns=['Emotion', 'Count'])
+                fig = px.bar(
+                    e_df, 
+                    x='Emotion', 
+                    y='Count', 
+                    color_discrete_sequence=['#8b5cf6'],
+                    text_auto=True
+                )
+                fig.update_layout(xaxis_tickangle=0)
+                st.plotly_chart(fig, use_container_width=True)
+            else:
+                st.info("NO DETAILED EMOTIONS")
+        else:
+            st.info("NO DATA")
+
+
+def _render_tab_plate(df_sessions, stats, t):
+    """Tab 3: 餐盤與剩食洞察"""
+    m1, m2 = st.columns(2)
+    m1.metric("WASTE COUNT", f"{stats['waste_count']}")
+    m2.metric(t("metric_waste"), f"{stats['waste_rate']:.1f}%")
+
+    st.write("")
+    if not df_sessions.empty:
+        insight_df = df_sessions[df_sessions['ai_insight'].notna() & (df_sessions['ai_insight'] != "")]
+        if not insight_df.empty:
+            for _, row in insight_df.iterrows():
+                ts_str = row['timestamp'].strftime('%H:%M')
+                with st.chat_message("assistant", avatar="🤖"):
+                    st.markdown(f"<span style='color:#06b6d4'>**[{ts_str} {row['mode']}]**</span>", unsafe_allow_html=True)
+                    st.write(row['ai_insight'])
+                    try:
+                        l_data = json.loads(row['leftover_data'])
+                        if l_data:
+                            st.caption(f"Data: {l_data}")
+                    except:
+                        pass
+        else:
+            st.info("NO INSIGHTS")
+    else:
+        st.info("NO DATA")
+
+
+def _render_tab_report(client, db, df_sessions, stats, df_logs, groups_df, date_range_strs, t):
+    """Tab 4: 營運總結報告 (Operational Report)"""
+    st.subheader("📋 營運總結報告 (Operations)")
+    st.caption("針對人流、整體滿意度與剩食率的宏觀分析，適合店長與外場管理人員。")
+    
+    start_dt_str, end_dt_str = date_range_strs
+    
+    if not df_sessions.empty:
+        # --- A. AI 營運分析區塊 ---
+        with st.container(border=True):
+            st.markdown(f"**統計區間**: `{start_dt_str}` ~ `{end_dt_str}`")
+            
+            # ==========================================
+            # 1. 計算人流趨勢 (Traffic Trend) - 改為 30 分鐘
+            # ==========================================
+            traffic_trend_str = "無人流數據"
+            if not df_logs.empty:
+                try:
+                    df_trend = df_logs.copy()
+                    df_trend['timestamp'] = pd.to_datetime(df_trend['timestamp'])
+                    df_trend.set_index('timestamp', inplace=True)
+                    
+                    # ★★★ 修改重點：改為 '30min' 區間重取樣 ★★★
+                    # 這樣 AI 可以看到更細緻的人流變化 (例如 12:00 vs 12:30)
+                    interval_avg = df_trend['people_count'].resample('30min').mean().fillna(0)
+                    
+                    trend_list = []
+                    for time_idx, count in interval_avg.items():
+                        if count > 0.5: # 過濾掉雜訊 (平均小於 0.5 人視為無人)
+                            time_str = time_idx.strftime("%H:%M")
+                            trend_list.append(f"{time_str}: {int(count)}人")
+                    
+                    if trend_list:
+                        traffic_trend_str = ", ".join(trend_list)
+                    else:
+                        traffic_trend_str = "該時段無顯著人流"
+                        
+                except Exception as e:
+                    print(f"Traffic processing error: {e}")
+                    traffic_trend_str = "數據處理錯誤"
+
+            # ==========================================
+            # 2. 準備宏觀數據 (Operation Stats) - 使用真實數據
+            # ==========================================
+            
+            # ★★★ 修改重點：直接從 groups_df 計算真實人數 ★★★
+            # groups_df 包含每組客人的 ['平均人數', '最大人數']
+            # 我們加總所有組別的 '最大人數' 作為總來客數
+            if not groups_df.empty and '最大人數' in groups_df.columns:
+                real_total_customers = int(groups_df['最大人數'].sum())
+            else:
+                # 如果沒有 groups 資料 (例如只跑了 live stream 但沒存成 group)，則退回用 log 最大值估算
+                real_total_customers = int(df_logs['people_count'].max()) if not df_logs.empty else 0
+
+            op_stats = {
+                "total_customers": real_total_customers,  # ✅ 真實數據
+                "total_sessions": len(df_sessions),       # 分析場次
+                "satisfaction_index": f"{stats['total_nods']} (Pos) vs {stats['total_shakes']} (Neg)",
+                "waste_rate": f"{stats['waste_rate']:.1f}%",
+                "traffic_trend_30min": traffic_trend_str  # ✅ 30分鐘區間數據
+            }
+
+            c1, c2 = st.columns([3, 1])
+            with c1:
+                st.info("💡 點擊右側按鈕，讓 AI 為您總結本時段的營運狀況與服務建議。")
+            with c2:
+                gen_btn = st.button("✨ 生成營運報告", type="primary", use_container_width=True)
+
+            if gen_btn:
+                with st.spinner("AI 顧問正在分析營運數據..."):
+                    prompt = f"Analyze Operation Stats: {op_stats}"
+                    async def run_op_rep():
+                        try: 
+                            BACKEND_CONFIG = {"store_type": "Buffet", "tone": "專業客觀", "tips_style": "營運流程優化"}
+                            resp, _ = await llm.summarize_session(op_stats, client=client, custom_instructions=prompt, **BACKEND_CONFIG)
+                            return resp
+                        except Exception as e:
+                            return f"Error: {e}"
+                    report = asyncio.run(run_op_rep())
+                    st.markdown("---")
+                    st.markdown(report)
+
+        # --- B. 影像佐證列表 ---
+        st.divider()
+        st.subheader(f"{t('header_evidence')} ({len(df_sessions)})")
+        
+        if 'session_id_raw' not in df_sessions.columns:
+                df_sessions['session_id_raw'] = df_sessions['timestamp'].dt.strftime('%Y%m%d%H%M%S')
+
+        for _, row in df_sessions.iterrows():
+            ts = row['timestamp']
+            time_str = ts.strftime('%m/%d %H:%M')
+            unique_session_id = row['session_id_raw']
+            
+            nods = int(row.get('nod_count', 0))
+            shakes = int(row.get('shake_count', 0))
+            label = f"📍 {time_str} | 😊 {nods} vs 😟 {shakes}"
+
+            with st.expander(label, expanded=False):
+                t1, t2, t3, t4, t5 = st.tabs(["🎥 NOD", "🎥 SHAKE", "🍽️ WASTE", "🔥 CROSS-CHECK", "😊 ALL EMOTIONS"])
+                with t1: _render_evidence_grid(db, unique_session_id, 'nod')
+                with t2: _render_evidence_grid(db, unique_session_id, 'shake')
+                with t3: _render_evidence_grid(db, unique_session_id, 'plate_vlm')
+                with t4: _render_comparison_gallery(db, unique_session_id)
+                with t5: _render_all_emotions_gallery(db, unique_session_id)
+    else:
+        st.info("在此區間內無資料。")
+
+
+def _render_tab_global(client, db_manager, df_sessions, t):
+    """Tab 5: 菜色研發報告 (Menu R&D Report)"""
+    st.subheader("🍔 菜色研發報告 (Menu Insights)")
+    st.caption("針對特定菜色的顧客情緒反應進行分析，適合主廚與菜單研發人員。")
+
+    if df_sessions.empty:
+        st.warning("⚠️ 目前選定的時間範圍內無 Session 資料，無法分析菜色。")
+        return
+
+    # --- 1. 資料聚合 (Aggregation) ---
+    # 這裡的邏輯是將所有場次的「餐點情緒」彙整起來
+    all_food_data = []
+    
+    for _, session_row in df_sessions.iterrows():
+        sid = session_row['session_id_raw']
+        # 撈取該 Session 的強烈情緒餐點證據
+        df_evidence = db_manager.get_event_evidence(sid, "strong_emotion_plate")
+        
+        if df_evidence.empty: continue
+            
+        for _, row in df_evidence.iterrows():
+            if row['human_corrected'] == 0: continue # 排除人工否決的
+            
+            food_name = row['food_label'] if row['food_label'] else "Unknown"
+            
+            # 解析情緒 (從檔名: 日期_情緒-分數_...)
+            try:
+                fname = os.path.basename(row['local_path'])
+                parts = fname.split('_')
+                # 假設檔名結構固定，取第3部分的情緒標籤
+                # 範例: ..._開心-98_...
+                emotion_tag = parts[2].split('-')[0] 
+                
+                all_food_data.append({
+                    "food": food_name,
+                    "emotion": emotion_tag
+                })
+            except:
+                continue
+
+    if not all_food_data:
+        st.info("在此時間範圍內，尚未蒐集到足夠的菜色情緒樣本 (需觸發強烈情緒快照)。")
+        return
+
+    # 轉換為 DataFrame 方便統計
+    df_analysis = pd.DataFrame(all_food_data)
+
+    # 準備給 LLM 的統計數據： {'漢堡': {'開心': 5, '嫌棄': 1}, ...}
+    food_stats = {}
+    for food in df_analysis['food'].unique():
+        sub_df = df_analysis[df_analysis['food'] == food]
+        counts = sub_df['emotion'].value_counts().to_dict()
+        food_stats[food] = counts
+
+    # --- 2. AI 菜色報告區塊 ---
+    with st.container(border=True):
+        c1, c2 = st.columns([3, 1])
+        with c1:
+            st.markdown(f"**已蒐集樣本數**: `{len(df_analysis)}` 筆反應 | **涵蓋菜色**: `{len(food_stats)}` 道")
+        with c2:
+            gen_menu_btn = st.button("✨ 生成研發報告", type="primary", use_container_width=True)
+
+        if gen_menu_btn:
+            if not client:
+                st.error("未設定 OpenAI API Key")
+            else:
+                with st.spinner("AI 正在分析菜色表現..."):
+                    # 呼叫我們剛新增的專用函式
+                    async def run_menu_gpt():
+                        try:
+                            resp, _ = await llm.generate_menu_report(food_stats, client)
+                            return resp
+                        except Exception as e:
+                            return f"Error: {e}"
+                            
+                    report_text = asyncio.run(run_menu_gpt())
+                    st.markdown("---")
+                    st.markdown(report_text)
+
+    # --- 3. 單品項詳細圖表 (原本的功能) ---
+    st.divider()
+    st.markdown("#### 🔎 單品項詳細數據")
+    
+    c1, c2 = st.columns([1, 2])
+    with c1:
+        food_list = sorted(list(food_stats.keys()))
+        selected_food = st.selectbox("選擇要鑽研的菜色", food_list)
+        if selected_food:
+            st.json(food_stats[selected_food])
+
+    with c2:
+        if selected_food:
+            df_target = df_analysis[df_analysis['food'] == selected_food]
+            emo_counts = df_target['emotion'].value_counts().reset_index()
+            emo_counts.columns = ['Emotion', 'Count']
+            
+            fig = px.bar(
+                emo_counts, x='Emotion', y='Count',
+                title=f"「{selected_food}」情緒分佈圖",
+                color='Emotion', text_auto=True,
+                color_discrete_sequence=px.colors.qualitative.Pastel
+            )
+            st.plotly_chart(fig, use_container_width=True)
+
+
+# ==========================================
+# 主顯示函式 (Controller)
+# ==========================================
+
 def display(client, db_manager, t=None): 
-    # 防呆：如果沒傳 t (翻譯函式)，給一個預設的
     if t is None: 
         def t(k): return k
     
@@ -510,44 +841,23 @@ def display(client, db_manager, t=None):
         if st.button(t("btn_refresh"), use_container_width=True):
             st.rerun()
 
-    # ==========================================
-    # 1. 篩選器 (Filter)
-    # ==========================================
-# 1. 篩選器
+    # 1. 篩選器 (Filter Section)
     with st.container(border=True):
-        # ★★★ 修改這裡：將 color 改為 var(--primary-color) ★★★
         st.markdown(f"<h5 style='color:var(--primary-color); font-weight:bold;'>{t('filter_title')}</h5>", unsafe_allow_html=True)
-        
         col1, col2, col3 = st.columns(3)
-
         with col1:
             today = datetime.date.today()
-            date_range = st.date_input(
-                t("date_range"), 
-                value=[today, today],
-                format="YYYY/MM/DD"
-            )
-            
+            date_range = st.date_input(t("date_range"), value=[today, today], format="YYYY/MM/DD")
         with col2:
-            time_range_option = st.selectbox(
-                t("time_period"),
-                [t("opt_all_day"), t("opt_custom")]
-            )
-
+            time_range_option = st.selectbox(t("time_period"), [t("opt_all_day"), t("opt_custom")])
         with col3:
-            # 這裡簡單映射選項
-            source_option = st.selectbox(
-                t("data_source"),
-                ["All", "Live", "Video"]
-            )
+            source_option = st.selectbox(t("data_source"), ["All", "Live", "Video"])
 
         if len(date_range) != 2:
             st.warning("Please select end date.")
             st.stop()
 
         start_date, end_date = date_range
-        
-        # 判斷是否為全日
         if "All Day" in time_range_option or "全日" in time_range_option:
             start_dt_str = f"{start_date} 00:00:00"
             end_dt_str = f"{end_date} 23:59:59"
@@ -560,14 +870,12 @@ def display(client, db_manager, t=None):
             start_dt_str = f"{start_date} {s_time.strftime('%H:%M:%S')}"
             end_dt_str = f"{end_date} {e_time.strftime('%H:%M:%S')}"
             
-    # 2. 數據獲取邏輯
+    # 2. 數據獲取 (Data Fetching)
     if source_option == "Live":
-        # [修改] 加入 'live_dual_cam'
         selected_sources = ['live_stream', 'live_session_summary', 'live_dual_cam']
     elif source_option == "Video":
         selected_sources = ['uploaded_video']
     else:
-        # [修改] 加入 'live_dual_cam'
         selected_sources = ['live_stream', 'live_session_summary', 'uploaded_video', 'live_dual_cam']
 
     df_logs = db.get_logs_by_range(start_dt_str, end_dt_str, source_types=selected_sources)
@@ -586,209 +894,55 @@ def display(client, db_manager, t=None):
         st.info("NO DATA AVAILABLE.")
         return
 
-    # ==========================================
-    # 3. 分頁顯示 (Tabs)
-    # ==========================================
-    tab1, tab2, tab3, tab4 = st.tabs([
+    # 3. 預先計算共用統計數據 (Pre-calculate Stats)
+    total_nods = df_sessions['nod_count'].sum() if not df_sessions.empty else 0
+    total_shakes = df_sessions['shake_count'].sum() if not df_sessions.empty else 0
+    waste_count = 0
+    if not df_sessions.empty:
+        for _, row in df_sessions.iterrows():
+            try:
+                data = json.loads(row['leftover_data'])
+                if data and len(data) > 0: 
+                    waste_count += 1
+            except: pass
+    waste_rate = (waste_count / len(df_sessions) * 100) if not df_sessions.empty else 0
+    
+    stats = {
+        'total_nods': total_nods,
+        'total_shakes': total_shakes,
+        'waste_count': waste_count,
+        'waste_rate': waste_rate
+    }
+
+    # 4. 主分頁顯示 (Main Tabs)
+    tab1, tab2, tab3, tab4, tab5 = st.tabs([
         t("tab_traffic"), 
         t("tab_satisfaction"), 
         t("tab_plate"), 
-        t("tab_report")
+        t("tab_report"),
+        t("tab_global_insight")
     ])
 
-    # --- TAB 1: Traffic ---
     with tab1:
-        c1, c2, c3 = st.columns(3)
-        avg_ppl = 0
-        if not df_logs.empty:
-            valid_ppl = df_logs[df_logs['people_count'] > 0]['people_count']
-            if not valid_ppl.empty:
-                avg_ppl = valid_ppl.mean()
+        _render_tab_traffic(df_logs, num_groups, groups_df, df_sessions, t)
 
-        c1.metric(t("metric_groups"), f"{num_groups}")
-        c2.metric(t("metric_avg_size"), f"{avg_ppl:.1f}")
-        c3.metric(t("metric_sessions"), len(df_sessions))
-
-        st.markdown(f"#### {t('chart_traffic')}")
-        with st.container(border=True):
-            if not df_logs.empty:
-                df_chart = df_logs.copy()
-                df_chart['timestamp'] = pd.to_datetime(df_chart['timestamp'])
-                df_chart = df_chart.set_index('timestamp')
-                flow_data = df_chart['people_count'].resample('5T').max().fillna(0)
-                st.area_chart(flow_data, color="#06b6d4", use_container_width=True)
-            else:
-                st.info("NO TRAFFIC DATA")
-        
-        if num_groups > 0:
-            with st.expander("DETAILS"):
-                st.dataframe(groups_df, use_container_width=True, hide_index=True)
-
-    # --- TAB 2: Satisfaction ---
     with tab2:
-        total_nods = df_sessions['nod_count'].sum() if not df_sessions.empty else 0
-        total_shakes = df_sessions['shake_count'].sum() if not df_sessions.empty else 0
-        
-        waste_count = 0
-        if not df_sessions.empty:
-            for _, row in df_sessions.iterrows():
-                try:
-                    data = json.loads(row['leftover_data'])
-                    if data and len(data) > 0: 
-                        waste_count += 1
-                except:
-                    pass
-        waste_rate = (waste_count / len(df_sessions) * 100) if not df_sessions.empty else 0
+        _render_tab_satisfaction(df_sessions, df_logs, stats, t)
 
-        k1, k2, k3 = st.columns(3)
-        k1.metric(t("metric_nods"), int(total_nods))
-        k2.metric(t("metric_shakes"), int(total_shakes))
-        k3.metric(t("metric_waste"), f"{waste_rate:.1f}%")
-
-        st.divider()
-
-        st.markdown("#### 😊 EMOTION DISTRIBUTION")
-        
-        df_emotions = df_logs[df_logs['source_type'].isin(['live_session_summary', 'uploaded_video'])]
-        if df_emotions.empty:
-            # [修改] 這裡也要加入 'live_dual_cam'
-            df_emotions = df_logs[df_logs['source_type'].isin(['live_stream', 'live_dual_cam'])]
-
-        with st.container(border=True):
-            if not df_emotions.empty:
-                all_emotions = Counter()
-                data_found = False
-
-                for _, row in df_emotions.iterrows():
-                    e_raw = row.get('emotions')
-                    if pd.isna(e_raw) or e_raw == "":
-                        continue
-                    try:
-                        e_dict = ast.literal_eval(str(e_raw)) if isinstance(e_raw, str) else e_raw
-                        if isinstance(e_dict, dict):
-                            for k, v in e_dict.items():
-                                if k not in ['Meal_Status', 'status']:
-                                    try:
-                                        val = float(v) 
-                                        if val > 0:
-                                            all_emotions[k] += val
-                                            data_found = True
-                                    except (ValueError, TypeError):
-                                        continue
-                    except Exception:
-                        continue 
-
-                if data_found and all_emotions:
-                    e_df = pd.DataFrame(all_emotions.items(), columns=['Emotion', 'Count'])
-                    # 使用 Plotly 繪製，並設定 X 軸文字角度
-                    fig = px.bar(
-                        e_df, 
-                        x='Emotion', 
-                        y='Count', 
-                        color_discrete_sequence=['#8b5cf6'],
-                        text_auto=True # 顯示數值在柱狀圖上
-                    )
-                    # ★ 強制 X 軸文字水平顯示 (0度)
-                    fig.update_layout(xaxis_tickangle=0)
-                    
-                    st.plotly_chart(fig, use_container_width=True)
-                else:
-                    st.info("NO DETAILED EMOTIONS")
-            else:
-                st.info("NO DATA")
-
-    # --- TAB 3: Plate Insights ---
     with tab3:
-        m1, m2 = st.columns(2)
-        m1.metric("WASTE COUNT", f"{waste_count}")
-        m2.metric(t("metric_waste"), f"{waste_rate:.1f}%")
+        _render_tab_plate(df_sessions, stats, t)
 
-        st.write("")
-        if not df_sessions.empty:
-            insight_df = df_sessions[df_sessions['ai_insight'].notna() & (df_sessions['ai_insight'] != "")]
-            if not insight_df.empty:
-                for _, row in insight_df.iterrows():
-                    ts_str = row['timestamp'].strftime('%H:%M')
-                    with st.chat_message("assistant", avatar="🤖"):
-                        st.markdown(f"<span style='color:#06b6d4'>**[{ts_str} {row['mode']}]**</span>", unsafe_allow_html=True)
-                        st.write(row['ai_insight'])
-                        try:
-                            l_data = json.loads(row['leftover_data'])
-                            if l_data:
-                                st.caption(f"Data: {l_data}")
-                        except:
-                            pass
-            else:
-                st.info("NO INSIGHTS")
-        else:
-            st.info("NO DATA")
-
-    # --- TAB 4: Report ---
     with tab4:
-        st.subheader(t("tab_report"))
-        
-        if not df_sessions.empty:
-            st.markdown(f"**PERIOD**: `{start_dt_str}` ~ `{end_dt_str}`")
-            
-            period_stats = {
-                "total_sessions": len(df_sessions),
-                "total_nods": int(total_nods),
-                "total_shakes": int(total_shakes),
-                "waste_rate": f"{waste_rate:.1f}%"
-            }
-
-            if st.button(t("btn_gen_report"), type="primary", use_container_width=True):
-                with st.spinner("AI Generating..."):
-                    prompt = f"Analyze: {period_stats}"
-                    async def run_rep():
-                        try: 
-                            BACKEND_CONFIG = {"store_type": "Buffet", "tone": "Pro", "tips_style": "Strategy"}
-                            resp, _ = await llm.summarize_session(period_stats, client=client, custom_instructions=prompt, **BACKEND_CONFIG)
-                            return resp
-                        except Exception as e:
-                            return f"Error: {e}"
-                    report = asyncio.run(run_rep())
-                    st.markdown(report)
-
-            st.divider()
-            st.subheader(f"{t('header_evidence')} ({len(df_sessions)})")
-            
-            if 'session_id_raw' not in df_sessions.columns:
-                 df_sessions['session_id_raw'] = df_sessions['timestamp'].dt.strftime('%Y%m%d%H%M%S')
-
-            for _, row in df_sessions.iterrows():
-                ts = row['timestamp']
-                time_str = ts.strftime('%m/%d %H:%M')
-                
-                nods = int(row.get('nod_count', 0))
-                shakes = int(row.get('shake_count', 0))
-                label = f"📍 {time_str} | 😊 {nods} vs 😟 {shakes}"
-                
-                unique_session_id = row['session_id_raw']
-
-                with st.expander(label, expanded=False):
-                    
-                    # 🔴 原本是 5 個 Tabs
-                    # t1, t2, t3, t4, t5 = st.tabs([...])
-
-                    # 🟢 請改成 6 個 Tabs (加入 FOOD INSIGHTS)
-                    t1, t2, t3, t4, t5, t6 = st.tabs([
-                        "🎥 NOD", 
-                        "🎥 SHAKE", 
-                        "🍽️ WASTE", 
-                        "🔥 CROSS-CHECK", 
-                        "😊 ALL EMOTIONS", 
-                        "🍽️ FOOD INSIGHTS"  # <--- 新增這個
-                    ])
-                    
-                    with t1: _render_evidence_grid(db, unique_session_id, 'nod')
-                    with t2: _render_evidence_grid(db, unique_session_id, 'shake')
-                    with t3: _render_evidence_grid(db, unique_session_id, 'plate_vlm')
-                    with t4: _render_comparison_gallery(db, unique_session_id)
-                    with t5: _render_global_insights(client, db, df_sessions, t)
-                    
-                    # 🟢 加入第 6 個分頁的內容
-                    with t6:
-                        _render_food_insights(db, unique_session_id)
-        else:
-            st.info("NO DATA")
+        # ★★★ 修正這裡：補上 groups_df 參數 ★★★
+        _render_tab_report(
+            client, 
+            db, 
+            df_sessions, 
+            stats, 
+            df_logs, 
+            groups_df,  # <--- 新增這個參數 (原本已經在 display 前面算好了)
+            (start_dt_str, end_dt_str), 
+            t
+        )
+    with tab5:
+        _render_tab_global(client, db, df_sessions, t)

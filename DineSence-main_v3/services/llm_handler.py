@@ -309,3 +309,39 @@ async def identify_food_item(plate_bgr, menu_items: list, client: AsyncOpenAI, m
     except Exception as e:
         print(f"Food ID Error: {e}")
         return "Error"
+    
+async def generate_menu_report(food_stats: dict, client: AsyncOpenAI, model="gpt-4o-mini"):
+    """
+    (非同步) 專門針對「菜色」生成研發與調整建議報告。
+    """
+    if not client: return "（未設定 API Key）", None
+
+    # 將統計數據轉為 JSON 字串
+    stats_str = json.dumps(food_stats, ensure_ascii=False, indent=2)
+
+    system_prompt = (
+        "你是一位擁有 20 年經驗的『餐飲菜色研發顧問』。你的工作是根據顧客對特定菜色的情緒反應數據，"
+        "為內場主廚提供具體的菜單調整建議。\n\n"
+        "【數據說明】\n"
+        "輸入的 JSON 格式為：{'菜名': {'開心': 次數, '嫌棄': 次數, ...}}\n\n"
+        "【報告結構要求】\n"
+        "1. 🏆 **明星菜色 (Star Dishes)**：正面情緒佔比最高的菜。分析其成功可能的因素（口味、賣相）。\n"
+        "2. 💣 **問題菜色 (Problem Dishes)**：負面情緒（嫌棄/失望/不滿）較高的菜。請大膽推測可能原因（如：調味過重、冷掉、食材搭配怪異）。\n"
+        "3. 🔪 **主廚行動建議 (Action Plan)**：針對問題菜色，提出 2-3 個具體的改良方向（例如：調整醬汁比例、更換盛盤方式）。\n"
+        "請用專業、直白且建設性的語氣撰寫，不要講空話。"
+    )
+
+    user_prompt = f"請分析本週的菜色情緒數據：\n{stats_str}"
+
+    try:
+        resp = await client.chat.completions.create(
+            model=model,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt}
+            ],
+            temperature=0.7
+        )
+        return resp.choices[0].message.content, resp.usage
+    except Exception as e:
+        return f"生成菜色報告失敗: {e}", None

@@ -49,7 +49,9 @@ EMOTE_INTERVAL_SECONDS   = getattr(_cfg, "EMOTE_INTERVAL_SECONDS", 2.0)
 CAMERA_RESOLUTION_WIDTH  = getattr(_cfg, "CAMERA_RESOLUTION_WIDTH", 1280)
 CAMERA_RESOLUTION_HEIGHT = getattr(_cfg, "CAMERA_RESOLUTION_HEIGHT", 720)
 CAMERA_BUFFER_SIZE       = getattr(_cfg, "CAMERA_BUFFER_SIZE", 1)
-CAMERA_INDEX             = getattr(_cfg, "CAMERA_INDEX", 0)
+FACE_CAM_INDEX  = getattr(_cfg, "FACE_CAM_INDEX", 1)  # 預設 0 = Mac 筆電鏡頭
+PLATE_CAM_INDEX = getattr(_cfg, "PLATE_CAM_INDEX", 0)  # 預設 1 = 手機鏡頭（Camo 等）
+
 
 VLM_INTERVAL_SECONDS = 10.0
 LOG_INTERVAL_SECONDS = 5.0 
@@ -144,8 +146,9 @@ class LiveAnalyzer:
 
     # [修改] 人臉鏡頭迴圈 (筆電鏡頭)
     def _face_cam_loop(self):
+        print(f"[DEBUG] Face camera using index = {FACE_CAM_INDEX}")
         # 假設 0 是筆電鏡頭，解析度 1280x720
-        cap = self._open_camera(0, 1280, 720) 
+        cap = self._open_camera(FACE_CAM_INDEX, 1280, 720) 
         
         while not self._stop_event.is_set():
             ok, frame = cap.read()
@@ -168,8 +171,9 @@ class LiveAnalyzer:
 
     # [修改] 餐盤鏡頭迴圈 (外接鏡頭)
     def _plate_cam_loop(self):
+        print(f"[DEBUG] Plate camera using index = {PLATE_CAM_INDEX}")
         # 假設 1 是外接鏡頭，解析度可以用高一點例如 1920x1080 看清楚食物
-        cap = self._open_camera(1, 1920, 1080)
+        cap = self._open_camera(PLATE_CAM_INDEX, 1920, 1080)
         
         while not self._stop_event.is_set():
             ok, frame = cap.read()

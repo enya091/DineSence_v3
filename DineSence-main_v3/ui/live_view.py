@@ -20,37 +20,51 @@ def display(model_pack: dict, backend_config: dict, db_manager, t=None):
     # --- 1. Session State 初始化 ---
     if "current_raw_session_id" not in st.session_state:
         st.session_state.current_raw_session_id = datetime.now().strftime("%Y%m%d%H%M%S")
-    if "live_toggle_last_state" not in st.session_state: st.session_state.live_toggle_last_state = False
-    if "analyzer" not in st.session_state: st.session_state.analyzer = None
+    if "live_toggle_last_state" not in st.session_state:
+        st.session_state.live_toggle_last_state = False
+    if "analyzer" not in st.session_state:
+        st.session_state.analyzer = None
     
     # 統計變數
-    if "nod_count" not in st.session_state: st.session_state.nod_count = 0
-    if "shake_count" not in st.session_state: st.session_state.shake_count = 0
-    if "emotion_counter" not in st.session_state: st.session_state.emotion_counter = Counter()
-    if "leftover_counter" not in st.session_state: st.session_state.leftover_counter = Counter()
+    if "nod_count" not in st.session_state:
+        st.session_state.nod_count = 0
+    if "shake_count" not in st.session_state:
+        st.session_state.shake_count = 0
+    if "emotion_counter" not in st.session_state:
+        st.session_state.emotion_counter = Counter()
+    if "leftover_counter" not in st.session_state:
+        st.session_state.leftover_counter = Counter()
     
     # 顯示變數
-    if "last_plate_insight" not in st.session_state: st.session_state.last_plate_insight = "Waiting for VLM Analysis..."
-    if "session_start_time" not in st.session_state: st.session_state.session_start_time = None
-    if "last_display_emotion" not in st.session_state: st.session_state.last_display_emotion = "---"
+    if "last_plate_insight" not in st.session_state:
+        # 初始顯示：等待 AI 分析
+        st.session_state.last_plate_insight = "等待 AI 分析結果……"
+    if "session_start_time" not in st.session_state:
+        st.session_state.session_start_time = None
+    if "last_display_emotion" not in st.session_state:
+        st.session_state.last_display_emotion = "---"
     
-    # ★★★ Log Buffer 初始化 (找回原本的 Log) ★★★
-    if "live_log_buffer" not in st.session_state: st.session_state.live_log_buffer = ["System Ready..."]
+    # ★★★ Log Buffer 初始化 ★★★
+    if "live_log_buffer" not in st.session_state:
+        st.session_state.live_log_buffer = ["系統就緒……"]
 
     # --- 2. 頂部 HUD ---
     with st.container(border=True):
         c1, c2, c3, c4 = st.columns([1.5, 1, 1, 1])
         with c1:
-            st.markdown(f"<span style='color:var(--primary-color)'><h3>🔴 LIVE MONITORING</h3></span>", unsafe_allow_html=True)
-            st.caption(f"SESSION ID: {st.session_state.current_raw_session_id}")
+            st.markdown(
+                f"<span style='color:var(--primary-color)'><h3>{t('live_title')}</h3></span>",
+                unsafe_allow_html=True
+            )
+            st.caption(f"{t('session_id_label')}：{st.session_state.current_raw_session_id}")
         
         metric_people_ph = c2.empty()
         metric_sat_ph = c3.empty()
         metric_event_ph = c4.empty()
         
         metric_people_ph.metric(t("metric_people"), "0")
-        metric_sat_ph.metric("Nods/Shakes", "0 / 0")
-        metric_event_ph.metric("Emotion", "---")
+        metric_sat_ph.metric(t("metric_nods_shakes"), "0 / 0")
+        metric_event_ph.metric(t("metric_emotion"), "---")
 
     st.write("") 
 
@@ -58,30 +72,40 @@ def display(model_pack: dict, backend_config: dict, db_manager, t=None):
     col_face, col_plate = st.columns(2)
 
     with col_face:
-        st.markdown("#### 👤 Customer (Cam 0)")
+        st.markdown(f"#### {t('live_cam_face')}")
         face_video_ph = st.empty()
         face_video_ph.markdown(
-            f"""<div style='background-color:#000; height:360px; display:flex; 
-            align-items:center; justify-content:center; color:#666; border-radius:10px;'>
-            <h3>Waiting for Camera 0...</h3></div>""", unsafe_allow_html=True)
+            f"""
+            <div style='background-color:#000; height:360px; display:flex; 
+                 align-items:center; justify-content:center; color:#666; border-radius:10px;'>
+                <h3>{t('waiting_cam')}</h3>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
         
-        # ★★★ 恢復日誌顯示區 ★★★
+        # ★★★ 日誌顯示區 ★★★
         with st.container(border=True):
-            st.markdown("**System Log:**")
+            st.markdown(f"**{t('log_title')}**")
             log_placeholder = st.empty()
             log_placeholder.code("\n".join(st.session_state.live_log_buffer), language="bash")
 
     with col_plate:
-        st.markdown("#### 🍽️ Plate (Cam 1)")
+        st.markdown(f"#### {t('live_cam_plate')}")
         plate_video_ph = st.empty()
         plate_video_ph.markdown(
-            f"""<div style='background-color:#000; height:360px; display:flex; 
-            align-items:center; justify-content:center; color:#666; border-radius:10px;'>
-            <h3>Waiting for Camera 1...</h3></div>""", unsafe_allow_html=True)
+            f"""
+            <div style='background-color:#000; height:360px; display:flex; 
+                 align-items:center; justify-content:center; color:#666; border-radius:10px;'>
+                <h3>{t('waiting_cam')}</h3>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
         
         # AI Insight 區域
         with st.container(border=True):
-            st.markdown("**AI Insight (VLM):**")
+            st.markdown(f"**{t('ai_insight')}**")
             vlm_insight_ph = st.empty()
             vlm_insight_ph.info(st.session_state.last_plate_insight)
 
@@ -89,9 +113,9 @@ def display(model_pack: dict, backend_config: dict, db_manager, t=None):
     with st.container(border=True):
         col_btn1, col_btn2, col_status = st.columns([1, 1, 4])
         with col_btn1:
-            start_btn = st.button("▶ START", type="primary", use_container_width=True)
+            start_btn = st.button(f"▶ {t('start_btn')}", type="primary", use_container_width=True)
         with col_btn2:
-            stop_btn = st.button("⏹ STOP", type="secondary", use_container_width=True)
+            stop_btn = st.button(f"⏹ {t('stop_btn')}", type="secondary", use_container_width=True)
         with col_status:
             status_ph = st.empty()
 
@@ -108,14 +132,14 @@ def display(model_pack: dict, backend_config: dict, db_manager, t=None):
 
     # (A) 啟動 Analyzer
     if current_toggle_state and st.session_state.analyzer is None:
-        status_ph.success("Dual Camera System Active")
+        status_ph.success("雙鏡頭系統已啟動")
         
         st.session_state.nod_count = 0
         st.session_state.shake_count = 0
         st.session_state.emotion_counter = Counter()
         st.session_state.leftover_counter = Counter()
-        st.session_state.last_plate_insight = "Waiting for AI Analysis..." 
-        st.session_state.live_log_buffer = ["System Initialized."]
+        st.session_state.last_plate_insight = "等待 AI 分析……"
+        st.session_state.live_log_buffer = ["系統初始化完成。"]
         
         analysis_options = { "opt_nod": True, "opt_emote": True, "opt_plate": True }
         
@@ -127,7 +151,7 @@ def display(model_pack: dict, backend_config: dict, db_manager, t=None):
 
     # (B) 停止 Analyzer
     if not current_toggle_state and st.session_state.analyzer:
-        status_ph.warning("Saving Session Data...")
+        status_ph.warning("正在儲存此次紀錄……")
         st.session_state.analyzer.stop()
         st.session_state.analyzer = None
         
@@ -145,7 +169,7 @@ def display(model_pack: dict, backend_config: dict, db_manager, t=None):
             leftover_dict=dict(st.session_state.leftover_counter),
             insight=st.session_state.last_plate_insight
         )
-        status_ph.info(f"Session Saved. Duration: {int(duration)}s")
+        status_ph.info(f"紀錄已儲存，總時長：{int(duration)} 秒")
 
     # --- 6. 更新迴圈 ---
     MAX_LOG_LINES = 6
@@ -157,23 +181,45 @@ def display(model_pack: dict, backend_config: dict, db_manager, t=None):
             result = st.session_state.analyzer.get_latest_analysis_result()
             
             if f_frame is None and p_frame is None:
-                time.sleep(0.05); continue
+                time.sleep(0.05)
+                continue
 
-            # 更新畫面 (Cam 0)
+            # 更新畫面 (鏡頭 0：顧客)
             if f_frame is not None:
-                cv2.putText(f_frame, f"Nod: {st.session_state.nod_count}", (20, 40), 
-                           cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-                cv2.putText(f_frame, f"Emo: {st.session_state.last_display_emotion}", (20, 80), 
-                           cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 2)
+                cv2.putText(
+                    f_frame,
+                    f"點頭: {st.session_state.nod_count}",
+                    (20, 40),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    1,
+                    (0, 255, 0),
+                    2
+                )
+                cv2.putText(
+                    f_frame,
+                    f"情緒: {st.session_state.last_display_emotion}",
+                    (20, 80),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    1,
+                    (0, 255, 255),
+                    2
+                )
                 face_video_ph.image(cv2.cvtColor(f_frame, cv2.COLOR_BGR2RGB), use_container_width=True)
 
-            # 更新畫面 (Cam 1)
+            # 更新畫面 (鏡頭 1：餐盤)
             if p_frame is not None:
                 # 安全讀取 plate_event
-                p_label = getattr(result, "plate_event", None)
+                p_label = getattr(result, "plate_event", None) if result is not None else None
                 if p_label:
-                     cv2.putText(p_frame, f"{p_label}", (20, 40), 
-                           cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+                    cv2.putText(
+                        p_frame,
+                        f"{p_label}",
+                        (20, 40),
+                        cv2.FONT_HERSHEY_SIMPLEX,
+                        1,
+                        (0, 0, 255),
+                        2
+                    )
                 plate_video_ph.image(cv2.cvtColor(p_frame, cv2.COLOR_BGR2RGB), use_container_width=True)
 
             # 處理數據與更新 Log
@@ -183,25 +229,26 @@ def display(model_pack: dict, backend_config: dict, db_manager, t=None):
                 
                 if result.nod_event: 
                     st.session_state.nod_count += 1
-                    event_str += " [NOD]"
+                    event_str += " [點頭]"
                 if getattr(result, "shake_event", False): 
                     st.session_state.shake_count += 1
-                    event_str += " [SHAKE]"
+                    event_str += " [搖頭]"
                 if result.emotion_event:
                     st.session_state.emotion_counter[result.emotion_event] += 1
                     st.session_state.last_display_emotion = result.emotion_event
-                    event_str += f" [{result.emotion_event}]" # 情緒太頻繁，不一定要寫入Log
+                    event_str += f" [{result.emotion_event}]"
                 
-                # 安全讀取 plate_insight (這裡已經用 getattr 防呆)
+                # 安全讀取 plate_insight
                 insight = getattr(result, "plate_insight", None)
                 if insight:
                     st.session_state.last_plate_insight = insight
-                    event_str += " [VLM Report]"
+                    event_str += " [餐盤報告]"
 
                 # 如果有事件，寫入 Log Buffer
                 if event_str:
                     log_buffer.append(f"[{ts}]{event_str}")
-                    if len(log_buffer) > MAX_LOG_LINES: log_buffer.pop(0)
+                    if len(log_buffer) > MAX_LOG_LINES:
+                        log_buffer.pop(0)
                     st.session_state.live_log_buffer = log_buffer
                     log_placeholder.code("\n".join(log_buffer), language="bash")
                 
@@ -210,7 +257,10 @@ def display(model_pack: dict, backend_config: dict, db_manager, t=None):
                 # 更新 HUD
                 display_info = result.display_info
                 metric_people_ph.metric(t("metric_people"), display_info.get("people_count", 0))
-                metric_sat_ph.metric("Nods / Shakes", f"{st.session_state.nod_count} / {st.session_state.shake_count}")
-                metric_event_ph.metric("Emotion", st.session_state.last_display_emotion)
+                metric_sat_ph.metric(
+                    t("metric_nods_shakes"),
+                    f"{st.session_state.nod_count} / {st.session_state.shake_count}"
+                )
+                metric_event_ph.metric(t("metric_emotion"), st.session_state.last_display_emotion)
 
             time.sleep(0.03)

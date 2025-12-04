@@ -24,6 +24,16 @@ TRANSLATIONS = {
         "waiting": "等待影像輸入...",
         "log_title": "📋 即時事件日誌",
         "ai_insight": "AI 現場洞察",
+        "live_title": "🔴 即時監控",
+
+        # 🔹 Live View 追加 key（給 ui/live_view.py 用）
+        "metric_nods_shakes": "點頭 / 搖頭",
+        "metric_emotion": "情緒",
+        "live_cam_face": "👤 顧客（鏡頭 0）",
+        "live_cam_plate": "🍽️ 餐盤（鏡頭 1）",
+        "session_id_label": "紀錄編號",
+        "waiting_cam": "等待鏡頭畫面……",
+        
 
         # Video View
         "video_header": "🎞️ 上傳影片進行離線分析",
@@ -40,6 +50,7 @@ TRANSLATIONS = {
         "msg_done": "分析完成！",
         "expander_raw": "查看原始數據 (JSON)",
         "header_summary": "🎯 影片分析摘要",
+
 
         # Dashboard View
         "dash_title": "📊 營運數據儀表板",
@@ -91,6 +102,16 @@ TRANSLATIONS = {
         "waiting": "Awaiting Video Feed...",
         "log_title": "📋 Event Log",
         "ai_insight": "AI Live Insights",
+        "live_title": "🔴 LIVE MONITORING",
+
+
+        # 🔹 Live View extra keys (for ui/live_view.py)
+        "metric_nods_shakes": "Nods / Shakes",
+        "metric_emotion": "Emotion",
+        "live_cam_face": "👤 Customer (Cam 0)",
+        "live_cam_plate": "🍽️ Plate (Cam 1)",
+        "session_id_label": "Session ID",
+        "waiting_cam": "Waiting for camera feed...",
 
         # Video View
         "video_header": "🎞️ Offline Video Analysis",

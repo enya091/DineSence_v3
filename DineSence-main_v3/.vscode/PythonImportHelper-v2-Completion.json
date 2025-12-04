@@ -69,6 +69,81 @@
         "documentation": {}
     },
     {
+        "label": "os",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "os",
+        "description": "os",
+        "detail": "os",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "datetime",
+        "description": "datetime",
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "platform",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "platform",
+        "description": "platform",
+        "detail": "platform",
+        "documentation": {}
+    },
+    {
+        "label": "insert_log",
+        "importPath": "services.database",
+        "description": "services.database",
+        "isExtraImport": true,
+        "detail": "services.database",
+        "documentation": {}
+    },
+    {
+        "label": "DatabaseManager",
+        "importPath": "services.database",
+        "description": "services.database",
+        "isExtraImport": true,
+        "detail": "services.database",
+        "documentation": {}
+    },
+    {
+        "label": "save_session",
+        "importPath": "services.database",
+        "description": "services.database",
+        "isExtraImport": true,
+        "detail": "services.database",
+        "documentation": {}
+    },
+    {
+        "label": "DatabaseManager",
+        "importPath": "services.database",
+        "description": "services.database",
+        "isExtraImport": true,
+        "detail": "services.database",
+        "documentation": {}
+    },
+    {
         "label": "HeadGestureDetector",
         "importPath": "services.vision_analysis",
         "description": "services.vision_analysis",
@@ -93,19 +168,11 @@
         "documentation": {}
     },
     {
-        "label": "llm_handler",
-        "importPath": "services",
-        "description": "services",
+        "label": "detect_food_regions_yolo",
+        "importPath": "services.vision_analysis",
+        "description": "services.vision_analysis",
         "isExtraImport": true,
-        "detail": "services",
-        "documentation": {}
-    },
-    {
-        "label": "database",
-        "importPath": "services",
-        "description": "services",
-        "isExtraImport": true,
-        "detail": "services",
+        "detail": "services.vision_analysis",
         "documentation": {}
     },
     {
@@ -118,14 +185,6 @@
     },
     {
         "label": "llm_handler",
-        "importPath": "services",
-        "description": "services",
-        "isExtraImport": true,
-        "detail": "services",
-        "documentation": {}
-    },
-    {
-        "label": "database",
         "importPath": "services",
         "description": "services",
         "isExtraImport": true,
@@ -182,35 +241,19 @@
         "documentation": {}
     },
     {
-        "label": "EMOTE_INTERVAL_SECONDS",
-        "importPath": "config",
-        "description": "config",
+        "label": "analyze_plate_vlm",
+        "importPath": "services.llm_handler",
+        "description": "services.llm_handler",
         "isExtraImport": true,
-        "detail": "config",
+        "detail": "services.llm_handler",
         "documentation": {}
     },
     {
-        "label": "CAMERA_RESOLUTION_WIDTH",
-        "importPath": "config",
-        "description": "config",
+        "label": "identify_food_item  # ★ [NEW] 記得引入這個！",
+        "importPath": "services.llm_handler",
+        "description": "services.llm_handler",
         "isExtraImport": true,
-        "detail": "config",
-        "documentation": {}
-    },
-    {
-        "label": "CAMERA_RESOLUTION_HEIGHT",
-        "importPath": "config",
-        "description": "config",
-        "isExtraImport": true,
-        "detail": "config",
-        "documentation": {}
-    },
-    {
-        "label": "CAMERA_BUFFER_SIZE",
-        "importPath": "config",
-        "description": "config",
-        "isExtraImport": true,
-        "detail": "config",
+        "detail": "services.llm_handler",
         "documentation": {}
     },
     {
@@ -342,6 +385,38 @@
         "documentation": {}
     },
     {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Dict",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Tuple",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Any",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
         "label": "annotations",
         "importPath": "__future__",
         "description": "__future__",
@@ -422,6 +497,14 @@
         "documentation": {}
     },
     {
+        "label": "Counter",
+        "importPath": "collections",
+        "description": "collections",
+        "isExtraImport": true,
+        "detail": "collections",
+        "documentation": {}
+    },
+    {
         "label": "pandas",
         "kind": 6,
         "isExtraImport": true,
@@ -446,22 +529,6 @@
         "importPath": "json",
         "description": "json",
         "detail": "json",
-        "documentation": {}
-    },
-    {
-        "label": "datetime",
-        "importPath": "datetime",
-        "description": "datetime",
-        "isExtraImport": true,
-        "detail": "datetime",
-        "documentation": {}
-    },
-    {
-        "label": "datetime",
-        "importPath": "datetime",
-        "description": "datetime",
-        "isExtraImport": true,
-        "detail": "datetime",
         "documentation": {}
     },
     {
@@ -550,6 +617,15 @@
         "documentation": {}
     },
     {
+        "label": "ast",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "ast",
+        "description": "ast",
+        "detail": "ast",
+        "documentation": {}
+    },
+    {
         "label": "plotly.express",
         "kind": 6,
         "isExtraImport": true,
@@ -564,23 +640,6 @@
         "description": "core.live_analyzer",
         "isExtraImport": true,
         "detail": "core.live_analyzer",
-        "documentation": {}
-    },
-    {
-        "label": "AnalysisResult",
-        "importPath": "core.types",
-        "description": "core.types",
-        "isExtraImport": true,
-        "detail": "core.types",
-        "documentation": {}
-    },
-    {
-        "label": "os",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "os",
-        "description": "os",
-        "detail": "os",
         "documentation": {}
     },
     {
@@ -648,6 +707,14 @@
         "documentation": {}
     },
     {
+        "label": "localization",
+        "importPath": "utils",
+        "description": "utils",
+        "isExtraImport": true,
+        "detail": "utils",
+        "documentation": {}
+    },
+    {
         "label": "load_dotenv",
         "importPath": "dotenv",
         "description": "dotenv",
@@ -656,11 +723,37 @@
         "documentation": {}
     },
     {
+        "label": "DeepFace",
+        "importPath": "deepface",
+        "description": "deepface",
+        "isExtraImport": true,
+        "detail": "deepface",
+        "documentation": {}
+    },
+    {
         "label": "LiveAnalyzer",
         "kind": 6,
         "importPath": "core.live_analyzer",
         "description": "core.live_analyzer",
-        "peekOfCode": "class LiveAnalyzer:\n    def __init__(self, model_pack: dict, menu_items: list, analysis_options: dict):\n        self.model_pack = model_pack\n        self.menu_items = menu_items\n        self.analysis_options = analysis_options\n        self._frame_display_queue = Queue(maxsize=1)\n        self._frame_analysis_queue = Queue(maxsize=1)\n        self._analysis_result_queue = Queue(maxsize=1)\n        self.gesture_detector = HeadGestureDetector()\n        self._stop_event = threading.Event()",
+        "peekOfCode": "class LiveAnalyzer:\n    def __init__(self, model_pack: dict, menu_items: list, analysis_options: dict, db_manager):\n        self.model_pack = model_pack\n        self.menu_items = menu_items\n        self.analysis_options = analysis_options\n        self._face_display_queue = Queue(maxsize=1)\n        self._face_analysis_queue = Queue(maxsize=1)\n        self._plate_display_queue = Queue(maxsize=1)\n        self._plate_analysis_queue = Queue(maxsize=1)\n        # 結果佇列維持一個，因為我們要合併結果傳給 UI",
+        "detail": "core.live_analyzer",
+        "documentation": {}
+    },
+    {
+        "label": "CAMERA_RESOLUTION_HEIGHT",
+        "kind": 5,
+        "importPath": "core.live_analyzer",
+        "description": "core.live_analyzer",
+        "peekOfCode": "CAMERA_RESOLUTION_HEIGHT = getattr(_cfg, \"CAMERA_RESOLUTION_HEIGHT\", 720)\nCAMERA_BUFFER_SIZE       = getattr(_cfg, \"CAMERA_BUFFER_SIZE\", 1)\nFACE_CAM_INDEX  = getattr(_cfg, \"FACE_CAM_INDEX\", 1)  # 預設 0 = Mac 筆電鏡頭\nPLATE_CAM_INDEX = getattr(_cfg, \"PLATE_CAM_INDEX\", 0)  # 預設 1 = 手機鏡頭（Camo 等）\nVLM_INTERVAL_SECONDS = 10.0\nLOG_INTERVAL_SECONDS = 5.0 \nEVIDENCE_DIR = \"session_evidence\" \nclass LiveAnalyzer:\n    def __init__(self, model_pack: dict, menu_items: list, analysis_options: dict, db_manager):\n        self.model_pack = model_pack",
+        "detail": "core.live_analyzer",
+        "documentation": {}
+    },
+    {
+        "label": "PLATE_CAM_INDEX",
+        "kind": 5,
+        "importPath": "core.live_analyzer",
+        "description": "core.live_analyzer",
+        "peekOfCode": "PLATE_CAM_INDEX = getattr(_cfg, \"PLATE_CAM_INDEX\", 0)  # 預設 1 = 手機鏡頭（Camo 等）\nVLM_INTERVAL_SECONDS = 10.0\nLOG_INTERVAL_SECONDS = 5.0 \nEVIDENCE_DIR = \"session_evidence\" \nclass LiveAnalyzer:\n    def __init__(self, model_pack: dict, menu_items: list, analysis_options: dict, db_manager):\n        self.model_pack = model_pack\n        self.menu_items = menu_items\n        self.analysis_options = analysis_options\n        self._face_display_queue = Queue(maxsize=1)",
         "detail": "core.live_analyzer",
         "documentation": {}
     },
@@ -669,7 +762,25 @@
         "kind": 5,
         "importPath": "core.live_analyzer",
         "description": "core.live_analyzer",
-        "peekOfCode": "VLM_INTERVAL_SECONDS = 10.0\nclass LiveAnalyzer:\n    def __init__(self, model_pack: dict, menu_items: list, analysis_options: dict):\n        self.model_pack = model_pack\n        self.menu_items = menu_items\n        self.analysis_options = analysis_options\n        self._frame_display_queue = Queue(maxsize=1)\n        self._frame_analysis_queue = Queue(maxsize=1)\n        self._analysis_result_queue = Queue(maxsize=1)\n        self.gesture_detector = HeadGestureDetector()",
+        "peekOfCode": "VLM_INTERVAL_SECONDS = 10.0\nLOG_INTERVAL_SECONDS = 5.0 \nEVIDENCE_DIR = \"session_evidence\" \nclass LiveAnalyzer:\n    def __init__(self, model_pack: dict, menu_items: list, analysis_options: dict, db_manager):\n        self.model_pack = model_pack\n        self.menu_items = menu_items\n        self.analysis_options = analysis_options\n        self._face_display_queue = Queue(maxsize=1)\n        self._face_analysis_queue = Queue(maxsize=1)",
+        "detail": "core.live_analyzer",
+        "documentation": {}
+    },
+    {
+        "label": "LOG_INTERVAL_SECONDS",
+        "kind": 5,
+        "importPath": "core.live_analyzer",
+        "description": "core.live_analyzer",
+        "peekOfCode": "LOG_INTERVAL_SECONDS = 5.0 \nEVIDENCE_DIR = \"session_evidence\" \nclass LiveAnalyzer:\n    def __init__(self, model_pack: dict, menu_items: list, analysis_options: dict, db_manager):\n        self.model_pack = model_pack\n        self.menu_items = menu_items\n        self.analysis_options = analysis_options\n        self._face_display_queue = Queue(maxsize=1)\n        self._face_analysis_queue = Queue(maxsize=1)\n        self._plate_display_queue = Queue(maxsize=1)",
+        "detail": "core.live_analyzer",
+        "documentation": {}
+    },
+    {
+        "label": "EVIDENCE_DIR",
+        "kind": 5,
+        "importPath": "core.live_analyzer",
+        "description": "core.live_analyzer",
+        "peekOfCode": "EVIDENCE_DIR = \"session_evidence\" \nclass LiveAnalyzer:\n    def __init__(self, model_pack: dict, menu_items: list, analysis_options: dict, db_manager):\n        self.model_pack = model_pack\n        self.menu_items = menu_items\n        self.analysis_options = analysis_options\n        self._face_display_queue = Queue(maxsize=1)\n        self._face_analysis_queue = Queue(maxsize=1)\n        self._plate_display_queue = Queue(maxsize=1)\n        self._plate_analysis_queue = Queue(maxsize=1)",
         "detail": "core.live_analyzer",
         "documentation": {}
     },
@@ -678,7 +789,7 @@
         "kind": 6,
         "importPath": "core.types",
         "description": "core.types",
-        "peekOfCode": "class AnalysisResult:\n    \"\"\"\n    【新版】用於存放單次背景分析結果的「純數據」結構。\n    這個物件不包含影像，只包含分析出的事件和資訊，\n    會在背景的分析執行緒和主執行緒之間傳遞。\n    \"\"\"\n    # --- 分析出的「事件」(Event) ---\n    # 這些是用於觸發主執行緒中計數器更新的信號\n    nod_event: bool = False\n    emotion_event: str = \"\"",
+        "peekOfCode": "class AnalysisResult:\n    def __init__(self):\n        # 既有的欄位\n        self.nod_event = False\n        self.shake_event = False\n        self.emotion_event = None\n        self.plate_event = None\n        # ★★★ 新增這兩個缺少的欄位 ★★★\n        self.plate_insight = None      # 修正 AttributeError\n        self.token_usage_event = None  # 避免未來報錯",
         "detail": "core.types",
         "documentation": {}
     },
@@ -746,11 +857,11 @@
         "documentation": {}
     },
     {
-        "label": "init_db",
-        "kind": 2,
+        "label": "DatabaseManager",
+        "kind": 6,
         "importPath": "services.database",
         "description": "services.database",
-        "peekOfCode": "def init_db():\n    \"\"\"初始化資料庫，建立表格\"\"\"\n    conn = sqlite3.connect(DB_NAME)\n    c = conn.cursor()\n    # 建立分析紀錄表\n    # 包含：時間、模式(行為/餐盤)、統計數據(JSON格式)、AI洞察\n    c.execute('''\n        CREATE TABLE IF NOT EXISTS analysis_records (\n            id INTEGER PRIMARY KEY AUTOINCREMENT,\n            timestamp TEXT,",
+        "peekOfCode": "class DatabaseManager:\n    def __init__(self, db_path=DB_NAME):\n        self.db_path = db_path\n        self.init_db()\n    def get_connection(self):\n        \"\"\"建立並回傳資料庫連線\"\"\"\n        return sqlite3.connect(\n            self.db_path, \n            check_same_thread=False,\n            timeout=10.0",
         "detail": "services.database",
         "documentation": {}
     },
@@ -759,16 +870,52 @@
         "kind": 2,
         "importPath": "services.database",
         "description": "services.database",
-        "peekOfCode": "def save_session(mode, duration, nod, shake, emotion_dict, leftover_dict, insight):\n    \"\"\"儲存一次分析 Session 的結果\"\"\"\n    conn = sqlite3.connect(DB_NAME)\n    c = conn.cursor()\n    # 將字典轉為 JSON 字串儲存\n    emotion_json = json.dumps(emotion_dict, ensure_ascii=False)\n    leftover_json = json.dumps(leftover_dict, ensure_ascii=False)\n    timestamp = datetime.now().strftime(\"%Y-%m-%d %H:%M:%S\")\n    c.execute('''\n        INSERT INTO analysis_records ",
+        "peekOfCode": "def save_session(raw_session_id, mode, duration, nod, shake, emotion_dict, leftover_dict, insight):\n    return _db_instance.save_session(raw_session_id, mode, duration, nod, shake, emotion_dict, leftover_dict, insight)\ndef insert_log(source_type, people_count, emotions, food_detected):\n    return _db_instance.insert_log(source_type, people_count, emotions, food_detected)\ndef get_customer_groups_analysis(start_time, end_time, gap_minutes=3):\n    return _db_instance.get_customer_groups_analysis(start_time, end_time, gap_minutes)\ndef get_logs_by_range(start_time, end_time, source_types=None):\n    return _db_instance.get_logs_by_range(start_time, end_time, source_types)\ndef get_event_evidence(session_id, event_type=None):\n    return _db_instance.get_event_evidence(session_id, event_type)",
         "detail": "services.database",
         "documentation": {}
     },
     {
-        "label": "load_all_data",
+        "label": "insert_log",
         "kind": 2,
         "importPath": "services.database",
         "description": "services.database",
-        "peekOfCode": "def load_all_data():\n    \"\"\"讀取所有資料，回傳 Pandas DataFrame\"\"\"\n    conn = sqlite3.connect(DB_NAME)\n    # 直接讀成 DataFrame 方便分析\n    df = pd.read_sql_query(\"SELECT * FROM analysis_records ORDER BY timestamp DESC\", conn)\n    conn.close()\n    return df",
+        "peekOfCode": "def insert_log(source_type, people_count, emotions, food_detected):\n    return _db_instance.insert_log(source_type, people_count, emotions, food_detected)\ndef get_customer_groups_analysis(start_time, end_time, gap_minutes=3):\n    return _db_instance.get_customer_groups_analysis(start_time, end_time, gap_minutes)\ndef get_logs_by_range(start_time, end_time, source_types=None):\n    return _db_instance.get_logs_by_range(start_time, end_time, source_types)\ndef get_event_evidence(session_id, event_type=None):\n    return _db_instance.get_event_evidence(session_id, event_type)\ndef update_evidence_feedback(evidence_id, is_correct: bool):\n    return _db_instance.update_evidence_feedback(evidence_id, is_correct)",
+        "detail": "services.database",
+        "documentation": {}
+    },
+    {
+        "label": "get_customer_groups_analysis",
+        "kind": 2,
+        "importPath": "services.database",
+        "description": "services.database",
+        "peekOfCode": "def get_customer_groups_analysis(start_time, end_time, gap_minutes=3):\n    return _db_instance.get_customer_groups_analysis(start_time, end_time, gap_minutes)\ndef get_logs_by_range(start_time, end_time, source_types=None):\n    return _db_instance.get_logs_by_range(start_time, end_time, source_types)\ndef get_event_evidence(session_id, event_type=None):\n    return _db_instance.get_event_evidence(session_id, event_type)\ndef update_evidence_feedback(evidence_id, is_correct: bool):\n    return _db_instance.update_evidence_feedback(evidence_id, is_correct)",
+        "detail": "services.database",
+        "documentation": {}
+    },
+    {
+        "label": "get_logs_by_range",
+        "kind": 2,
+        "importPath": "services.database",
+        "description": "services.database",
+        "peekOfCode": "def get_logs_by_range(start_time, end_time, source_types=None):\n    return _db_instance.get_logs_by_range(start_time, end_time, source_types)\ndef get_event_evidence(session_id, event_type=None):\n    return _db_instance.get_event_evidence(session_id, event_type)\ndef update_evidence_feedback(evidence_id, is_correct: bool):\n    return _db_instance.update_evidence_feedback(evidence_id, is_correct)",
+        "detail": "services.database",
+        "documentation": {}
+    },
+    {
+        "label": "get_event_evidence",
+        "kind": 2,
+        "importPath": "services.database",
+        "description": "services.database",
+        "peekOfCode": "def get_event_evidence(session_id, event_type=None):\n    return _db_instance.get_event_evidence(session_id, event_type)\ndef update_evidence_feedback(evidence_id, is_correct: bool):\n    return _db_instance.update_evidence_feedback(evidence_id, is_correct)",
+        "detail": "services.database",
+        "documentation": {}
+    },
+    {
+        "label": "update_evidence_feedback",
+        "kind": 2,
+        "importPath": "services.database",
+        "description": "services.database",
+        "peekOfCode": "def update_evidence_feedback(evidence_id, is_correct: bool):\n    return _db_instance.update_evidence_feedback(evidence_id, is_correct)",
         "detail": "services.database",
         "documentation": {}
     },
@@ -777,7 +924,16 @@
         "kind": 5,
         "importPath": "services.database",
         "description": "services.database",
-        "peekOfCode": "DB_NAME = \"dinesence.db\"\ndef init_db():\n    \"\"\"初始化資料庫，建立表格\"\"\"\n    conn = sqlite3.connect(DB_NAME)\n    c = conn.cursor()\n    # 建立分析紀錄表\n    # 包含：時間、模式(行為/餐盤)、統計數據(JSON格式)、AI洞察\n    c.execute('''\n        CREATE TABLE IF NOT EXISTS analysis_records (\n            id INTEGER PRIMARY KEY AUTOINCREMENT,",
+        "peekOfCode": "DB_NAME = \"dinesence.db\"\nclass DatabaseManager:\n    def __init__(self, db_path=DB_NAME):\n        self.db_path = db_path\n        self.init_db()\n    def get_connection(self):\n        \"\"\"建立並回傳資料庫連線\"\"\"\n        return sqlite3.connect(\n            self.db_path, \n            check_same_thread=False,",
+        "detail": "services.database",
+        "documentation": {}
+    },
+    {
+        "label": "_db_instance",
+        "kind": 5,
+        "importPath": "services.database",
+        "description": "services.database",
+        "peekOfCode": "_db_instance = DatabaseManager()\ndef save_session(raw_session_id, mode, duration, nod, shake, emotion_dict, leftover_dict, insight):\n    return _db_instance.save_session(raw_session_id, mode, duration, nod, shake, emotion_dict, leftover_dict, insight)\ndef insert_log(source_type, people_count, emotions, food_detected):\n    return _db_instance.insert_log(source_type, people_count, emotions, food_detected)\ndef get_customer_groups_analysis(start_time, end_time, gap_minutes=3):\n    return _db_instance.get_customer_groups_analysis(start_time, end_time, gap_minutes)\ndef get_logs_by_range(start_time, end_time, source_types=None):\n    return _db_instance.get_logs_by_range(start_time, end_time, source_types)\ndef get_event_evidence(session_id, event_type=None):",
         "detail": "services.database",
         "documentation": {}
     },
@@ -957,7 +1113,7 @@
         "kind": 2,
         "importPath": "services.llm_handler",
         "description": "services.llm_handler",
-        "peekOfCode": "def get_openai_client(api_key):\n    \"\"\"根據 API Key 初始化並返回異步的 OpenAI 客戶端物件。\"\"\"\n    if not api_key:\n        return None\n    try:\n        return AsyncOpenAI(api_key=api_key)\n    except Exception as e:\n        print(f\"初始化 OpenAI Client 失敗: {e}\")\n        return None\ndef _image_to_base64(pil_image):",
+        "peekOfCode": "def get_openai_client(api_key):\n    \"\"\"根據 API Key 初始化並返回異步的 OpenAI 客戶端物件。\"\"\"\n    if not api_key:\n        return None\n    try:\n        return AsyncOpenAI(api_key=api_key)\n    except Exception as e:\n        print(f\"初始化 OpenAI Client 失敗: {e}\")\n        return None\ndef _image_to_base64(pil_image: Image.Image) -> str:",
         "detail": "services.llm_handler",
         "documentation": {}
     },
@@ -966,7 +1122,16 @@
         "kind": 5,
         "importPath": "services.llm_handler",
         "description": "services.llm_handler",
-        "peekOfCode": "aclient = httpx.AsyncClient()\ndef get_openai_client(api_key):\n    \"\"\"根據 API Key 初始化並返回異步的 OpenAI 客戶端物件。\"\"\"\n    if not api_key:\n        return None\n    try:\n        return AsyncOpenAI(api_key=api_key)\n    except Exception as e:\n        print(f\"初始化 OpenAI Client 失敗: {e}\")\n        return None",
+        "peekOfCode": "aclient = httpx.AsyncClient()\n# 圖片最大邊長限制\nMAX_VLM_IMAGE_DIM = 768\ndef get_openai_client(api_key):\n    \"\"\"根據 API Key 初始化並返回異步的 OpenAI 客戶端物件。\"\"\"\n    if not api_key:\n        return None\n    try:\n        return AsyncOpenAI(api_key=api_key)\n    except Exception as e:",
+        "detail": "services.llm_handler",
+        "documentation": {}
+    },
+    {
+        "label": "MAX_VLM_IMAGE_DIM",
+        "kind": 5,
+        "importPath": "services.llm_handler",
+        "description": "services.llm_handler",
+        "peekOfCode": "MAX_VLM_IMAGE_DIM = 768\ndef get_openai_client(api_key):\n    \"\"\"根據 API Key 初始化並返回異步的 OpenAI 客戶端物件。\"\"\"\n    if not api_key:\n        return None\n    try:\n        return AsyncOpenAI(api_key=api_key)\n    except Exception as e:\n        print(f\"初始化 OpenAI Client 失敗: {e}\")\n        return None",
         "detail": "services.llm_handler",
         "documentation": {}
     },
@@ -1101,7 +1266,16 @@
         "kind": 2,
         "importPath": "ui.dashboard_view",
         "description": "ui.dashboard_view",
-        "peekOfCode": "def display(client):\n    st.header(\"📈 營運數據儀表板\")\n    st.caption(\"整合即時鏡頭與離線影片的歷史分析數據\")\n    # 1. 讀取資料庫\n    df = database.load_all_data()\n    if df.empty:\n        st.info(\"目前資料庫尚無紀錄，請先去「即時鏡頭分析」跑幾次 Session。\")\n        return\n    # 2. 資料預處理 (解析 JSON)\n    # 將 emotion_data 字串轉為 dict 方便統計",
+        "peekOfCode": "def display(client, db_manager, t=None): \n    if t is None: \n        def t(k): return k\n    db = db_manager \n    col_title, col_refresh = st.columns([5, 1])\n    with col_title:\n        st.subheader(t(\"dash_title\"))\n    with col_refresh:\n        if st.button(t(\"btn_refresh\"), use_container_width=True):\n            st.rerun()",
+        "detail": "ui.dashboard_view",
+        "documentation": {}
+    },
+    {
+        "label": "EVIDENCE_DIR",
+        "kind": 5,
+        "importPath": "ui.dashboard_view",
+        "description": "ui.dashboard_view",
+        "peekOfCode": "EVIDENCE_DIR = \"session_evidence\"\n# 輔助函式：圖片 Grid\ndef _render_evidence_grid(db_manager, session_id, event_type):\n    \"\"\"\n    負責讀取並顯示圖片 Grid，不包含外層的 Expander。\n    \"\"\"\n    evidence_df = db_manager.get_event_evidence(session_id, event_type)\n    if evidence_df.empty:\n        st.info(\"NO EVIDENCE FOUND.\", icon=\"ℹ️\")\n        return",
         "detail": "ui.dashboard_view",
         "documentation": {}
     },
@@ -1110,7 +1284,7 @@
         "kind": 2,
         "importPath": "ui.live_view",
         "description": "ui.live_view",
-        "peekOfCode": "def display(model_pack: dict, backend_config: dict):\n    \"\"\"\n    backend_config: 包含 store_type, tone 等後端設定\n    \"\"\"\n    lcol, rcol = st.columns([3, 1]) # 調整比例讓畫面更大\n    with rcol:\n        st.subheader(\"⚙️ 設定\")\n        analysis_mode = st.radio(\n            \"分析模式\",\n            [\"🙂 顧客行為\", \"🍽️ 餐盤剩食\"],",
+        "peekOfCode": "def display(model_pack: dict, backend_config: dict, db_manager, t=None):\n    \"\"\"\n    Live 監控介面 - 雙鏡頭戰情室 (Dual Camera Command Center)\n    \"\"\"\n    if t is None:\n        def t(k): return k\n    # --- 1. Session State 初始化 ---\n    if \"current_raw_session_id\" not in st.session_state:\n        st.session_state.current_raw_session_id = datetime.now().strftime(\"%Y%m%d%H%M%S\")\n    if \"live_toggle_last_state\" not in st.session_state:",
         "detail": "ui.live_view",
         "documentation": {}
     },
@@ -1119,8 +1293,17 @@
         "kind": 2,
         "importPath": "ui.login_view",
         "description": "ui.login_view",
-        "peekOfCode": "def display():\n    \"\"\"\n    顯示登入頁面並處理驗證邏輯。\n    如果登入成功，會將 st.session_state['auth'] 設為 True 並重新整理頁面。\n    \"\"\"\n    st.markdown(\"<h1 style='text-align: center;'>DineSence 顧客分析平台</h1>\", unsafe_allow_html=True)\n    st.markdown(\"---\")\n    lcol, ccol, rcol = st.columns([1, 1.5, 1])\n    with ccol:\n        with st.container(border=True):",
+        "peekOfCode": "def display():\n    \"\"\"\n    顯示登入頁面並處理驗證邏輯。\n    \"\"\"\n    lcol, ccol, rcol = st.columns([1, 0.8, 1])\n    with ccol:\n        st.write(\"\") \n        st.write(\"\") \n        # 使用容器創造毛玻璃卡片\n        with st.container(border=True):",
         "detail": "ui.login_view",
+        "documentation": {}
+    },
+    {
+        "label": "draw_debug_info",
+        "kind": 2,
+        "importPath": "ui.video_view",
+        "description": "ui.video_view",
+        "peekOfCode": "def draw_debug_info(frame, face_res, food_res, plate_info):\n    debug_frame = frame.copy()\n    if face_res and face_res.detections:\n        for detection in face_res.detections:\n            bbox = detection.location_data.relative_bounding_box\n            h, w, c = debug_frame.shape\n            x = int(bbox.xmin * w); y = int(bbox.ymin * h)\n            rw = int(bbox.width * w); rh = int(bbox.height * h)\n            cv2.rectangle(debug_frame, (x, y), (x + rw, y + rh), (0, 0, 255), 2)\n            cv2.putText(debug_frame, \"Face\", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)",
+        "detail": "ui.video_view",
         "documentation": {}
     },
     {
@@ -1128,8 +1311,26 @@
         "kind": 2,
         "importPath": "ui.video_view",
         "description": "ui.video_view",
-        "peekOfCode": "def display(client, menu_items, llm_preferences):\n    \"\"\"\n    顯示「影片離線分析」分頁的所有 UI 元素與分析邏輯。\n    Args:\n        client (OpenAI): 初始化後的 OpenAI 客戶端物件。\n        menu_items (list): 從側邊欄獲取的菜單項目列表。\n        llm_preferences (dict): 包含 store_type, tone, tips_style 的字典。\n    \"\"\"\n    st.subheader(\"🎞️ 上傳影片進行離線分析與摘要\")\n    up = st.file_uploader(\"支援 .mp4 / .avi 格式\", type=[\"mp4\", \"avi\"])",
+        "peekOfCode": "def display(client, menu_items, llm_preferences, t=None):\n    # 防呆：如果沒傳 t，給個預設函式 (雖然理論上 app.py 會傳)\n    if t is None: \n        def t(k): return k\n    st.subheader(t(\"video_header\"))\n    up = st.file_uploader(t(\"video_upload_label\"), type=[\"mp4\", \"avi\"])\n    # --- 設定區 ---\n    with st.container(border=True):\n        col1, col2, col3 = st.columns(3)\n        with col1:",
         "detail": "ui.video_view",
+        "documentation": {}
+    },
+    {
+        "label": "get_text",
+        "kind": 2,
+        "importPath": "utils.localization",
+        "description": "utils.localization",
+        "peekOfCode": "def get_text(key, lang=\"zh\"):\n    return TRANSLATIONS.get(lang, TRANSLATIONS[\"zh\"]).get(key, key)",
+        "detail": "utils.localization",
+        "documentation": {}
+    },
+    {
+        "label": "TRANSLATIONS",
+        "kind": 5,
+        "importPath": "utils.localization",
+        "description": "utils.localization",
+        "peekOfCode": "TRANSLATIONS = {\n    \"zh\": {\n        # 通用\n        \"app_title\": \"DineSence智慧餐飲分析\",\n        \"settings\": \"系統設定\",\n        \"select_lang\": \" \",\n        # Tabs\n        \"tab_live\": \"🌟 現場監控 (Live)\",\n        \"tab_video\": \"🎞️ 影像分析 (Video)\",\n        \"tab_dashboard\": \"📈 營運儀表板 (Dashboard)\",",
+        "detail": "utils.localization",
         "documentation": {}
     },
     {
@@ -1160,11 +1361,29 @@
         "documentation": {}
     },
     {
+        "label": "load_custom_css",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def load_custom_css():\n    st.markdown(\"\"\"\n    <style>\n        /* 1. 引用字體 */\n        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap');\n        /* 2. 全局設定 - 讓 Streamlit 使用 config.toml 的設定 */\n        html, body, [class*=\"css\"] {\n            font-family: 'Noto Sans TC', sans-serif;\n            /* 移除強制背景色，讓 config.toml 生效 */\n        }",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "t",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def t(key):\n    return localization.get_text(key, st.session_state['language'])\n# --- 4. 初始化資源 ---\n@st.cache_resource\ndef load_models():\n    db_manager = DatabaseManager() \n    openai_client = llm_handler.get_openai_client(config.OPENAI_API_KEY)\n    pose_detector = va.get_pose_detector()\n    face_detector = va.get_face_detector()\n    _ = va.get_food_model() if hasattr(va, 'get_food_model') else None",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
         "label": "load_models",
         "kind": 2,
         "importPath": "app",
         "description": "app",
-        "peekOfCode": "def load_models():\n    database.init_db() # [NEW] 初始化資料庫\n    openai_client = llm_handler.get_openai_client(config.OPENAI_API_KEY)\n    pose_detector = va.get_pose_detector()\n    face_detector = va.get_face_detector()\n    _ = va.get_food_model() if hasattr(va, 'get_food_model') else None\n    body_emotion_detector = BodyEmotionDetector()\n    emotion_analyzer = EmotionSatisfactionAnalyzer()\n    return openai_client, pose_detector, face_detector, body_emotion_detector, emotion_analyzer\nstate_manager.initialize_state()",
+        "peekOfCode": "def load_models():\n    db_manager = DatabaseManager() \n    openai_client = llm_handler.get_openai_client(config.OPENAI_API_KEY)\n    pose_detector = va.get_pose_detector()\n    face_detector = va.get_face_detector()\n    _ = va.get_food_model() if hasattr(va, 'get_food_model') else None\n    body_emotion_detector = BodyEmotionDetector()\n    emotion_analyzer = EmotionSatisfactionAnalyzer()\n    return openai_client, pose_detector, face_detector, body_emotion_detector, emotion_analyzer, db_manager\nclient, pose_detector, face_detector, body_emotion_detector, emotion_analyzer, db_manager = load_models()",
         "detail": "app",
         "documentation": {}
     },
@@ -1173,7 +1392,7 @@
         "kind": 5,
         "importPath": "app",
         "description": "app",
-        "peekOfCode": "BACKEND_CONFIG = {\n    \"store_type\": \"自助式餐廳 (Buffet)\", \n    \"tone\": \"專業客觀\",\n    \"tips_style\": \"營運流程優化\",\n    # 菜單現在主要用於後端分析參考，即時分析暫時不依賴它\n    \"menu_items\": [\"熱門主食\", \"季節蔬菜\", \"甜點區\", \"飲料區\"] \n}\nmodel_pack = {\n    \"client\": client,\n    \"pose_detector\": pose_detector,",
+        "peekOfCode": "BACKEND_CONFIG = {\n    \"store_type\": \"Buffet\", \n    \"menu_items\": [\"Main Course\", \"Vegetables\", \"Dessert\", \"Drinks\"] \n}\nmodel_pack = {\n    \"client\": client,\n    \"pose_detector\": pose_detector,\n    \"face_detector\": face_detector\n}\n# --- 7. 主頁面 UI ---",
         "detail": "app",
         "documentation": {}
     },
@@ -1182,7 +1401,7 @@
         "kind": 5,
         "importPath": "app",
         "description": "app",
-        "peekOfCode": "model_pack = {\n    \"client\": client,\n    \"pose_detector\": pose_detector,\n    \"face_detector\": face_detector\n}\n# --- 5. 主頁面 UI ---\nst.title(\"🍽️ DineSence 顧客分析平台\")\nif not client:\n    st.error(\"⚠️ 偵測不到 OpenAI API 金鑰！請檢查 .env 檔案。\")\nelse:",
+        "peekOfCode": "model_pack = {\n    \"client\": client,\n    \"pose_detector\": pose_detector,\n    \"face_detector\": face_detector\n}\n# --- 7. 主頁面 UI ---\ntop_col1, top_col2 = st.columns([6, 1])\nwith top_col1:\n    # 標題這裡也讓它使用主色\n    st.markdown(f\"<h1>DineSence <span style='color:var(--primary-color); text-shadow:0 0 15px var(--primary-color);'></span> <span style='font-size:0.5em; opacity:0.7;'>// {t('live_panel_title')}</span></h1>\", unsafe_allow_html=True)",
         "detail": "app",
         "documentation": {}
     },
@@ -1209,7 +1428,7 @@
         "kind": 5,
         "importPath": "config",
         "description": "config",
-        "peekOfCode": "OPENAI_API_KEY = os.getenv(\"OPENAI_API_KEY\")\n# ---------------------\n# LLM Setting\n# ---------------------\nLLM_MODEL_EMOTION = \"gpt-4o-mini\"\nLLM_MODEL_SUMMARY = \"gpt-4o-mini\"\n# ---------------------\n# Camera Setting\n# ---------------------\nCAMERA_RESOLUTION_WIDTH = 640",
+        "peekOfCode": "OPENAI_API_KEY = os.getenv(\"OPENAI_API_KEY\")\n# ---------------------\n# LLM Setting\n# ---------------------\nLLM_MODEL_EMOTION = \"gpt-4o-mini\"\nLLM_MODEL_SUMMARY = \"gpt-4o-mini\"\n# ---------------------\n# Camera Setting\n# ---------------------\n# 鏡頭設定",
         "detail": "config",
         "documentation": {}
     },
@@ -1218,7 +1437,7 @@
         "kind": 5,
         "importPath": "config",
         "description": "config",
-        "peekOfCode": "LLM_MODEL_EMOTION = \"gpt-4o-mini\"\nLLM_MODEL_SUMMARY = \"gpt-4o-mini\"\n# ---------------------\n# Camera Setting\n# ---------------------\nCAMERA_RESOLUTION_WIDTH = 640\nCAMERA_RESOLUTION_HEIGHT = 360\nCAMERA_BUFFER_SIZE = 2\nEMOTE_INTERVAL_SECONDS = 1.5\n# ---------------------",
+        "peekOfCode": "LLM_MODEL_EMOTION = \"gpt-4o-mini\"\nLLM_MODEL_SUMMARY = \"gpt-4o-mini\"\n# ---------------------\n# Camera Setting\n# ---------------------\n# 鏡頭設定\n# 建議：0 通常是內建鏡頭 (Face)，1 通常是外接 USB 鏡頭 (Plate)\nCAMERA_INDEX_FACE = 1   \nCAMERA_INDEX_PLATE = 0\n# 給 LiveAnalyzer 用的索引（保持一致）",
         "detail": "config",
         "documentation": {}
     },
@@ -1227,7 +1446,61 @@
         "kind": 5,
         "importPath": "config",
         "description": "config",
-        "peekOfCode": "LLM_MODEL_SUMMARY = \"gpt-4o-mini\"\n# ---------------------\n# Camera Setting\n# ---------------------\nCAMERA_RESOLUTION_WIDTH = 640\nCAMERA_RESOLUTION_HEIGHT = 360\nCAMERA_BUFFER_SIZE = 2\nEMOTE_INTERVAL_SECONDS = 1.5\n# ---------------------\n# Head Gesture Detection (Nod & Shake)",
+        "peekOfCode": "LLM_MODEL_SUMMARY = \"gpt-4o-mini\"\n# ---------------------\n# Camera Setting\n# ---------------------\n# 鏡頭設定\n# 建議：0 通常是內建鏡頭 (Face)，1 通常是外接 USB 鏡頭 (Plate)\nCAMERA_INDEX_FACE = 1   \nCAMERA_INDEX_PLATE = 0\n# 給 LiveAnalyzer 用的索引（保持一致）\nFACE_CAM_INDEX = CAMERA_INDEX_FACE   # = 0",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "CAMERA_INDEX_FACE",
+        "kind": 5,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "CAMERA_INDEX_FACE = 1   \nCAMERA_INDEX_PLATE = 0\n# 給 LiveAnalyzer 用的索引（保持一致）\nFACE_CAM_INDEX = CAMERA_INDEX_FACE   # = 0\nPLATE_CAM_INDEX = CAMERA_INDEX_PLATE # = 1\n# 解析度可以分開設定，例如餐盤需要高畫質看細節，人臉只需要 720p\nFACE_CAM_RES = (1280, 720)\nPLATE_CAM_RES = (1920, 1080)\nCAMERA_RESOLUTION_WIDTH = 1280\nCAMERA_RESOLUTION_HEIGHT = 720",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "CAMERA_INDEX_PLATE",
+        "kind": 5,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "CAMERA_INDEX_PLATE = 0\n# 給 LiveAnalyzer 用的索引（保持一致）\nFACE_CAM_INDEX = CAMERA_INDEX_FACE   # = 0\nPLATE_CAM_INDEX = CAMERA_INDEX_PLATE # = 1\n# 解析度可以分開設定，例如餐盤需要高畫質看細節，人臉只需要 720p\nFACE_CAM_RES = (1280, 720)\nPLATE_CAM_RES = (1920, 1080)\nCAMERA_RESOLUTION_WIDTH = 1280\nCAMERA_RESOLUTION_HEIGHT = 720\nCAMERA_BUFFER_SIZE = 2",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "FACE_CAM_INDEX",
+        "kind": 5,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "FACE_CAM_INDEX = CAMERA_INDEX_FACE   # = 0\nPLATE_CAM_INDEX = CAMERA_INDEX_PLATE # = 1\n# 解析度可以分開設定，例如餐盤需要高畫質看細節，人臉只需要 720p\nFACE_CAM_RES = (1280, 720)\nPLATE_CAM_RES = (1920, 1080)\nCAMERA_RESOLUTION_WIDTH = 1280\nCAMERA_RESOLUTION_HEIGHT = 720\nCAMERA_BUFFER_SIZE = 2\nEMOTE_INTERVAL_SECONDS = 1.5\n# ---------------------",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "PLATE_CAM_INDEX",
+        "kind": 5,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "PLATE_CAM_INDEX = CAMERA_INDEX_PLATE # = 1\n# 解析度可以分開設定，例如餐盤需要高畫質看細節，人臉只需要 720p\nFACE_CAM_RES = (1280, 720)\nPLATE_CAM_RES = (1920, 1080)\nCAMERA_RESOLUTION_WIDTH = 1280\nCAMERA_RESOLUTION_HEIGHT = 720\nCAMERA_BUFFER_SIZE = 2\nEMOTE_INTERVAL_SECONDS = 1.5\n# ---------------------\n# Head Gesture Detection (Nod & Shake)",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "FACE_CAM_RES",
+        "kind": 5,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "FACE_CAM_RES = (1280, 720)\nPLATE_CAM_RES = (1920, 1080)\nCAMERA_RESOLUTION_WIDTH = 1280\nCAMERA_RESOLUTION_HEIGHT = 720\nCAMERA_BUFFER_SIZE = 2\nEMOTE_INTERVAL_SECONDS = 1.5\n# ---------------------\n# Head Gesture Detection (Nod & Shake)\n# ---------------------\n# 採用嚴格版偵測參數",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "PLATE_CAM_RES",
+        "kind": 5,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "PLATE_CAM_RES = (1920, 1080)\nCAMERA_RESOLUTION_WIDTH = 1280\nCAMERA_RESOLUTION_HEIGHT = 720\nCAMERA_BUFFER_SIZE = 2\nEMOTE_INTERVAL_SECONDS = 1.5\n# ---------------------\n# Head Gesture Detection (Nod & Shake)\n# ---------------------\n# 採用嚴格版偵測參數\nGESTURE_BUFFER_LEN = 20           # 緩衝長度",
         "detail": "config",
         "documentation": {}
     },
@@ -1236,7 +1509,7 @@
         "kind": 5,
         "importPath": "config",
         "description": "config",
-        "peekOfCode": "CAMERA_RESOLUTION_WIDTH = 640\nCAMERA_RESOLUTION_HEIGHT = 360\nCAMERA_BUFFER_SIZE = 2\nEMOTE_INTERVAL_SECONDS = 1.5\n# ---------------------\n# Head Gesture Detection (Nod & Shake)\n# ---------------------\n# 採用嚴格版偵測參數\nGESTURE_BUFFER_LEN = 20           # 緩衝長度\nGESTURE_COOLDOWN_SECONDS = 1.0    # 冷卻時間",
+        "peekOfCode": "CAMERA_RESOLUTION_WIDTH = 1280\nCAMERA_RESOLUTION_HEIGHT = 720\nCAMERA_BUFFER_SIZE = 2\nEMOTE_INTERVAL_SECONDS = 1.5\n# ---------------------\n# Head Gesture Detection (Nod & Shake)\n# ---------------------\n# 採用嚴格版偵測參數\nGESTURE_BUFFER_LEN = 20           # 緩衝長度\nGESTURE_COOLDOWN_SECONDS = 1.0    # 冷卻時間",
         "detail": "config",
         "documentation": {}
     },
@@ -1245,7 +1518,7 @@
         "kind": 5,
         "importPath": "config",
         "description": "config",
-        "peekOfCode": "CAMERA_RESOLUTION_HEIGHT = 360\nCAMERA_BUFFER_SIZE = 2\nEMOTE_INTERVAL_SECONDS = 1.5\n# ---------------------\n# Head Gesture Detection (Nod & Shake)\n# ---------------------\n# 採用嚴格版偵測參數\nGESTURE_BUFFER_LEN = 20           # 緩衝長度\nGESTURE_COOLDOWN_SECONDS = 1.0    # 冷卻時間\nGESTURE_MIN_OFFSET = 0.002        # 去抖動門檻",
+        "peekOfCode": "CAMERA_RESOLUTION_HEIGHT = 720\nCAMERA_BUFFER_SIZE = 2\nEMOTE_INTERVAL_SECONDS = 1.5\n# ---------------------\n# Head Gesture Detection (Nod & Shake)\n# ---------------------\n# 採用嚴格版偵測參數\nGESTURE_BUFFER_LEN = 20           # 緩衝長度\nGESTURE_COOLDOWN_SECONDS = 1.0    # 冷卻時間\nGESTURE_MIN_OFFSET = 0.002        # 去抖動門檻",
         "detail": "config",
         "documentation": {}
     },
@@ -1346,6 +1619,42 @@
         "description": "config",
         "peekOfCode": "FOODISH_CLASSES = {\n    \"cake\", \"pizza\", \"hot dog\", \"banana\", \"apple\", \"sandwich\", \"orange\",\n    \"broccoli\", \"carrot\", \"bowl\", \"cup\", \"wine glass\", \"bottle\", \"spoon\",\n    \"fork\", \"knife\", \"plate\"\n}",
         "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "frame_placeholder1",
+        "kind": 5,
+        "importPath": "test_cam",
+        "description": "test_cam",
+        "peekOfCode": "frame_placeholder1 = col1.empty()\nframe_placeholder2 = col2.empty()\n# 你的兩個鏡頭\ncap1 = cv2.VideoCapture(1)\ncap2 = cv2.VideoCapture(0)  # 如果是 Camo (iPhone)，通常是 1\nwhile True:\n    ret1, f1 = cap1.read()\n    ret2, f2 = cap2.read()\n    if ret1:\n        frame_placeholder1.image(f1, channels=\"BGR\")",
+        "detail": "test_cam",
+        "documentation": {}
+    },
+    {
+        "label": "frame_placeholder2",
+        "kind": 5,
+        "importPath": "test_cam",
+        "description": "test_cam",
+        "peekOfCode": "frame_placeholder2 = col2.empty()\n# 你的兩個鏡頭\ncap1 = cv2.VideoCapture(1)\ncap2 = cv2.VideoCapture(0)  # 如果是 Camo (iPhone)，通常是 1\nwhile True:\n    ret1, f1 = cap1.read()\n    ret2, f2 = cap2.read()\n    if ret1:\n        frame_placeholder1.image(f1, channels=\"BGR\")\n    if ret2:",
+        "detail": "test_cam",
+        "documentation": {}
+    },
+    {
+        "label": "cap1",
+        "kind": 5,
+        "importPath": "test_cam",
+        "description": "test_cam",
+        "peekOfCode": "cap1 = cv2.VideoCapture(1)\ncap2 = cv2.VideoCapture(0)  # 如果是 Camo (iPhone)，通常是 1\nwhile True:\n    ret1, f1 = cap1.read()\n    ret2, f2 = cap2.read()\n    if ret1:\n        frame_placeholder1.image(f1, channels=\"BGR\")\n    if ret2:\n        frame_placeholder2.image(f2, channels=\"BGR\")\n    time.sleep(0.03)  # 避免爆 CPU（30 FPS）",
+        "detail": "test_cam",
+        "documentation": {}
+    },
+    {
+        "label": "cap2",
+        "kind": 5,
+        "importPath": "test_cam",
+        "description": "test_cam",
+        "peekOfCode": "cap2 = cv2.VideoCapture(0)  # 如果是 Camo (iPhone)，通常是 1\nwhile True:\n    ret1, f1 = cap1.read()\n    ret2, f2 = cap2.read()\n    if ret1:\n        frame_placeholder1.image(f1, channels=\"BGR\")\n    if ret2:\n        frame_placeholder2.image(f2, channels=\"BGR\")\n    time.sleep(0.03)  # 避免爆 CPU（30 FPS）",
+        "detail": "test_cam",
         "documentation": {}
     }
 ]

@@ -20,15 +20,15 @@ LLM_MODEL_SUMMARY = "gpt-4o-mini"
 # ---------------------
 # 鏡頭設定
 # 建議：0 通常是內建鏡頭 (Face)，1 通常是外接 USB 鏡頭 (Plate)
-CAMERA_INDEX_FACE = 1   
-CAMERA_INDEX_PLATE = 0
+CAMERA_INDEX_FACE = 0   
+CAMERA_INDEX_PLATE = 1
 
 # 給 LiveAnalyzer 用的索引（保持一致）
 FACE_CAM_INDEX = CAMERA_INDEX_FACE   # = 0
 PLATE_CAM_INDEX = CAMERA_INDEX_PLATE # = 1
 
 # 解析度可以分開設定，例如餐盤需要高畫質看細節，人臉只需要 720p
-FACE_CAM_RES = (1280, 720)
+FACE_CAM_RES = (1920, 1080)
 PLATE_CAM_RES = (1920, 1080)
 
 CAMERA_RESOLUTION_WIDTH = 1280

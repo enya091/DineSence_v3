@@ -151,6 +151,31 @@ def display(model_pack: dict, backend_config: dict, db_manager, t=None):
 
     # (B) 停止 Analyzer
     if not current_toggle_state and st.session_state.analyzer:
+        
+        # ★★★ [新增] 離席前的強制快照流程 ★★★
+        # 使用 spinner 告訴使用者系統正在運作，請勿關閉
+        with st.spinner("📸 顧客離席中：正在拍攝最終餐盤狀態並進行 AI 判斷..."):
+            
+            # 1. 呼叫後端執行拍攝與分析
+            final_path, final_label, final_ratio = st.session_state.analyzer.snapshot_final_plate()
+            
+            if final_path:
+                # 2. 顯示成功訊息與判斷結果
+                st.success(f"✅ 已紀錄離席畫面！最終判斷：{final_label}", icon="🍽️")
+                
+                # 3. [重要] 將這個最終判斷加入統計
+                # 這是為了讓這張照片的權重被計入 Dashboard
+                st.session_state.leftover_counter[final_label] += 1
+                
+                # 4. 更新介面上的 Insight 顯示
+                st.session_state.last_plate_insight = f"【結帳離席】最終狀態判定為：{final_label}"
+            else:
+                st.error("⚠️ 無法拍攝最終畫面，請檢查鏡頭連線")
+            
+            # 稍微停頓一下讓使用者看到訊息 (0.5秒)
+            time.sleep(0.5)
+
+        # --- 以下是原本的停止與存檔邏輯 (保持不變) ---
         status_ph.warning("正在儲存此次紀錄……")
         st.session_state.analyzer.stop()
         st.session_state.analyzer = None

@@ -169,6 +169,47 @@ class LiveAnalyzer:
             time.sleep(0.005)
         if cap: cap.release()
 
+    def snapshot_final_plate(self):
+        """
+        [NEW] 離席結帳模式：強制拍攝當下餐盤並進行最終分析
+        """
+        print("📸 啟動最終餐盤檢查程序...")
+        frame = None
+        try:
+            # 嘗試從 Queue 拿最新的餐盤畫面 (等待最多 1 秒，確保有畫面)
+            frame = self._plate_display_queue.get(timeout=1.0)
+        except Empty:
+            print("⚠️ 無法取得最終畫面 (Queue Empty)")
+            pass
+        
+        if frame is None:
+            return None, "擷取失敗", 0.0
+
+        # 1. 進行存檔 (Evidence) - 檔名標註 Final_Checkout
+        # 這樣在 Gallery 裡面一眼就能認出這是離席照
+        timestamp = datetime.now().strftime("%H點%M分%S秒")
+        filename = f"{timestamp}_Final_Checkout_Plate.jpg"
+        
+        # 使用既有的存檔函式
+        path = self._save_custom_file(filename, frame)
+        
+        # 2. 進行視覺分析 (CV) - 做判斷
+        # 呼叫 vision_analysis 的演算法
+        label, ratio, _ = estimate_plate_leftover(frame)
+        
+        print(f"🧐 最終判斷結果: {label} (剩餘 {ratio:.1%})")
+
+        # 3. 寫入資料庫佐證 (連結到本次 Session)
+        if path:
+            self.db_manager.save_event_evidence(
+                session_id=self.session_id,
+                event_type="final_checkout_plate", # ★ 特殊事件標記
+                local_path=path,
+                food_label=f"結帳狀態:{label}" # 把判斷結果寫在標籤裡
+            )
+            
+        return path, label, ratio
+
     # [修改] 餐盤鏡頭迴圈 (外接鏡頭)
     def _plate_cam_loop(self):
         print(f"[DEBUG] Plate camera using index = {PLATE_CAM_INDEX}")

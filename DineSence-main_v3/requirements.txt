@@ -12,3 +12,4 @@ pandas
 deepface
 tf-keras
 tensorflow==2.15.0
+python-docx

@@ -10,9 +10,9 @@ backgroundColor = "#031e27"
 secondaryBackgroundColor = "#1e293b"
 textColor = "#ffffff"
 font = "sans serif"
-
 [server]
 headless = true
 enableCORS = false
 enableXsrfProtection = false' > .streamlit/config.tom
 5. 輸入streamlit run app.py 
+ 

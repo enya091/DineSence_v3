@@ -71,7 +71,7 @@ TRANSLATIONS = {
         "tab_overview": "📊 營運數據概觀",       # [NEW] 合併後的首頁
         "tab_evidence": "📸 區間影像佐證紀錄",   # [NEW] 獨立出來的證據
         "tab_menu_insight": "🍔 菜色整體洞察",   # [RENAME] 原本的總體數據洞察
-        "tab_ai_agent": "🤖 AI Agent 智慧洞察",  # [NEW] 新增的空 Tab
+        "tab_ai_agent": "🤖 智能小助手",  # [NEW] 新增的空 Tab
         
         "btn_gen_insight_report": "✨ 生成總體菜色洞察報告 (LLM)",
         "metric_avg_size": "平均單組人數",
@@ -145,7 +145,7 @@ TRANSLATIONS = {
         "tab_traffic": "👥 Traffic",
         "tab_satisfaction": "😊 Satisfaction",
         "tab_plate": "🍽️ Plate Insights",
-        "tab_report": "🤖 AI Report",
+        "tab_report": "🤖 Smart Assistant",
         "tab_global_insight": "📊 Global Insights",
         "btn_gen_insight_report": "✨ Generate Global Food Report",
         "metric_groups": "Total Groups",

@@ -12,12 +12,18 @@ import cv2
 from typing import List, Dict, Tuple, Any
 
 # --- 導入我們建立的 prompt 讀取工具 ---
-from utils.prompt_loader import load_prompt_template
+# 請確保 utils/prompt_loader.py 存在，若無可暫時註解並將 Prompt 寫死在函式內
+try:
+    from utils.prompt_loader import load_prompt_template
+except ImportError:
+    # 簡單的 fallback，避免如果沒有這個檔案時報錯
+    def load_prompt_template(name, type):
+        return "" 
 
 # 使用 AsyncClient 進行非同步請求
 aclient = httpx.AsyncClient()
 
-# 圖片最大邊長限制
+# 圖片最大邊長限制 (加速 VLM 分析用)
 MAX_VLM_IMAGE_DIM = 768
 
 def get_openai_client(api_key):
@@ -48,9 +54,15 @@ def _image_to_base64(pil_image: Image.Image) -> str:
     pil_image.save(buffered, format="JPEG", quality=85)
     return base64.b64encode(buffered.getvalue()).decode("utf-8")
 
+# ==========================================
+# 1. 影像辨識相關 (Vision / VLM)
+# ==========================================
+
 async def gpt_image_classify_3cls(face_bgr, client: AsyncOpenAI, model="gpt-4o-mini"):
     """
     (非同步) 使用 GPT-4o-mini 進行三分類表情辨識。
+    輸入: OpenCV BGR 影像
+    輸出: (情緒字串, usage_data)
     """
     if face_bgr is None: return "無臉", None
     if client is None: return "（未設定 API）", None
@@ -90,26 +102,44 @@ async def gpt_image_classify_3cls(face_bgr, client: AsyncOpenAI, model="gpt-4o-m
         return "API 錯誤", None
 
 
-async def gpt_food_from_menu(plate_bgr, menu_items, client: AsyncOpenAI, model="gpt-4o-mini"):
-    """(非同步) 根據提供的菜單，使用 GPT-4o-mini 辨識畫面中的餐點。"""
-    if plate_bgr is None: return {"label": "未知", "confidence": 0.0, "rationale": "無ROI"}
-    if client is None: return {"label": "（未設定API）", "confidence": 0.0, "rationale": ""}
+async def identify_food_item(plate_bgr, menu_items: list, client: AsyncOpenAI, model="gpt-4o"):
+    """
+    針對強烈情緒觸發的快照，進行高精準度的食物辨識。
+    
+    Args:
+        plate_bgr: OpenCV 格式的影像 (BGR)
+        menu_items: 候選菜單列表 (例如 ["漢堡", "雞塊", "薯條"])
+        client: OpenAI Client
+        model: 建議使用 gpt-4o 以獲得最佳視覺辨識能力
+        
+    Returns:
+        str: 辨識出的食物名稱 (例如 "漢堡")，若失敗則回傳 "Unknown"
+    """
+    if plate_bgr is None: return "Unknown"
+    if client is None: return "No_API_Key"
 
+    # 1. 圖片轉 Base64
     pil_img = Image.fromarray(cv2.cvtColor(plate_bgr, cv2.COLOR_BGR2RGB))
     b64_img = _image_to_base64(pil_img)
 
-    options = ", ".join(menu_items)
+    # 2. 準備選單字串 (確保有 Other 選項)
+    safe_menu = menu_items.copy() if menu_items else []
+    if "其他" not in safe_menu and "Other" not in safe_menu:
+        safe_menu.append("Other")
+    
+    options_str = ", ".join(safe_menu)
+    
+    # 3. 建構 Prompt (要求精簡回答)
     prompt = (
-        "請只根據提供的菜單清單判斷畫面中的餐點屬於哪一項，並以 JSON 格式輸出：\n"
-        '{ "label": "<從菜單中擇一>", "confidence": 0.0~1.0 的小數, "rationale": "一句簡短的判斷原因" }\n'
-        f"菜單清單：[{options}]\n"
-        "如果畫面中的餐點與任何清單項目都不太相符，請選擇最相近的一項，但給予較低的信心度（<=0.4）。\n"
-        "請務必只輸出 JSON 物件，不要包含任何前後的文字或 markdown 標籤。"
+        f"請觀察這張餐盤照片，並從以下清單中選出最符合的食物名稱：\n"
+        f"清單：[{options_str}]\n"
+        "請直接回傳該名稱，不要加任何標點符號或額外文字(例如不要回傳 '是漢堡'，只要回傳 '漢堡')。\n"
+        "如果完全看不出來、空盤或不在清單中，請回傳 'Other'。"
     )
 
     try:
         resp = await client.chat.completions.create(
-            model=model, response_format={"type": "json_object"},
+            model=model,
             messages=[{
                 "role": "user",
                 "content": [
@@ -117,18 +147,24 @@ async def gpt_food_from_menu(plate_bgr, menu_items, client: AsyncOpenAI, model="
                     {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{b64_img}"}},
                 ],
             }],
-            temperature=0
+            temperature=0.1, # 低隨機性，確保答案穩定
+            max_tokens=20
         )
+        
+        # 4. 取得結果
         text = resp.choices[0].message.content.strip()
-        data = json.loads(text)
-        return {
-            "label": str(data.get("label", "未知")),
-            "confidence": float(data.get("confidence", 0.0)),
-            "rationale": str(data.get("rationale", ""))[:120]
-        }
+        
+        # 簡單防呆：確保回傳的文字真的在我們的清單裡
+        # (有時候 LLM 會回傳 "應該是漢堡"，我們只要 "漢堡")
+        for item in safe_menu:
+            if item in text:
+                return item
+                
+        return text # 如果都沒對到，就回傳原始答案 (通常是 Other)
+
     except Exception as e:
-        print(f"食物分類 API 錯誤: {e}")
-        return {"label": "解析失敗", "confidence": 0.0, "rationale": str(e)[:120]}
+        print(f"Food ID Error: {e}")
+        return "Error"
 
 
 async def analyze_plate_vlm(plate_bgr: Any, client: AsyncOpenAI, 
@@ -189,39 +225,45 @@ async def analyze_plate_vlm(plate_bgr: Any, client: AsyncOpenAI,
         return f"API 錯誤: {str(e)[:50]}", None
 
 
-# ★★★ [修正重點] 新增 custom_instructions 參數，並設為預設 None ★★★
+# ==========================================
+# 2. 文本報告與摘要相關 (Report Generation)
+# ==========================================
+
 async def summarize_session(stats: dict, 
                             client: AsyncOpenAI, 
                             store_type: str = "餐廳", 
                             tone: str = "專業", 
                             tips_style: str = "預設",
-                            custom_instructions: str = None,  # <--- 新增這個
+                            custom_instructions: str = None, 
                             model="gpt-4o-mini"):
     """
     (非同步) 根據統計數據，生成客製化的顧客體驗摘要報告。
-    支援 custom_instructions 以覆寫預設 Prompt。
+    支援 custom_instructions 參數，若有傳入則直接使用該指令 (用於 Dashboard 營運報告)。
     """
     if client is None:
         return "（未設定 OPENAI_API_KEY，無法產生摘要）", None
 
+    # 1. 嘗試讀取 Prompt 模板，若失敗則使用預設值
     try:
         system_template = load_prompt_template('summarize_session', 'system')
-        # 如果沒有自訂指令，才去讀取預設的 user template
-        if not custom_instructions:
-            user_template = load_prompt_template('summarize_session', 'user')
-    except FileNotFoundError as e:
-        error_msg = f"找不到 Prompt 模板檔案：{e}。請確認 'prompts/summarize_session/' 資料夾及內部的 .txt 檔案是否存在。"
-        print(error_msg)
-        return error_msg, None
+        if not system_template: raise FileNotFoundError
+    except:
+        system_template = "你是一位專業的餐廳營運顧問。請根據數據生成報告。"
+        
+    try:
+        user_template = load_prompt_template('summarize_session', 'user')
+        if not user_template: raise FileNotFoundError
+    except:
+        user_template = "數據如下：{stats_json}。請分析。"
 
-    # 1. 處理 System Prompt
+    # 2. 處理 System Prompt
     system_prompt = system_template.replace('{store_type}', str(store_type)) \
                                    .replace('{tone}', str(tone)) \
                                    .replace('{tips_style}', str(tips_style))
 
-    # 2. 處理 User Prompt (判斷是否使用自訂指令)
+    # 3. 處理 User Prompt
     if custom_instructions:
-        # ★ 如果有自訂指令，直接使用它 (Dashboard 模式)
+        # ★ 如果有自訂指令 (Dashboard Tab 1)，直接使用它
         user_prompt = custom_instructions
     else:
         # ★ 否則使用預設模板並填入數據 (Video/Live 模式)
@@ -245,74 +287,11 @@ async def summarize_session(stats: dict,
         error_msg = f"生成摘要時發生錯誤：{e}"
         print(f"摘要生成 API 錯誤: {e}")
         return error_msg, None
-    
-async def identify_food_item(plate_bgr, menu_items: list, client: AsyncOpenAI, model="gpt-4o"):
-    """
-    針對強烈情緒觸發的快照，進行高精準度的食物辨識。
-    
-    Args:
-        plate_bgr: OpenCV 格式的影像 (BGR)
-        menu_items: 候選菜單列表 (例如 ["漢堡", "雞塊", "薯條"])
-        client: OpenAI Client
-        model: 建議使用 gpt-4o 以獲得最佳視覺辨識能力
-        
-    Returns:
-        str: 辨識出的食物名稱 (例如 "漢堡")，若失敗則回傳 "Unknown"
-    """
-    if plate_bgr is None: return "Unknown"
-    if client is None: return "No_API_Key"
 
-    # 1. 圖片轉 Base64
-    pil_img = Image.fromarray(cv2.cvtColor(plate_bgr, cv2.COLOR_BGR2RGB))
-    b64_img = _image_to_base64(pil_img)
 
-    # 2. 準備選單字串 (確保有 Other 選項)
-    safe_menu = menu_items.copy()
-    if "其他" not in safe_menu and "Other" not in safe_menu:
-        safe_menu.append("Other")
-    
-    options_str = ", ".join(safe_menu)
-    
-    # 3. 建構 Prompt (要求精簡回答)
-    prompt = (
-        f"請觀察這張餐盤照片，並從以下清單中選出最符合的食物名稱：\n"
-        f"清單：[{options_str}]\n"
-        "請直接回傳該名稱，不要加任何標點符號或額外文字(例如不要回傳 '是漢堡'，只要回傳 '漢堡')。\n"
-        "如果完全看不出來、空盤或不在清單中，請回傳 'Other'。"
-    )
-
-    try:
-        resp = await client.chat.completions.create(
-            model=model,
-            messages=[{
-                "role": "user",
-                "content": [
-                    {"type": "text", "text": prompt},
-                    {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{b64_img}"}},
-                ],
-            }],
-            temperature=0.1, # 低隨機性，確保答案穩定
-            max_tokens=20
-        )
-        
-        # 4. 取得結果
-        text = resp.choices[0].message.content.strip()
-        
-        # 簡單防呆：確保回傳的文字真的在我們的清單裡
-        # (有時候 LLM 會回傳 "應該是漢堡"，我們只要 "漢堡")
-        for item in safe_menu:
-            if item in text:
-                return item
-                
-        return text # 如果都沒對到，就回傳原始答案 (通常是 Other)
-
-    except Exception as e:
-        print(f"Food ID Error: {e}")
-        return "Error"
-    
 async def generate_menu_report(food_stats: dict, client: AsyncOpenAI, model="gpt-4o-mini"):
     """
-    (非同步) 專門針對「菜色」生成研發與調整建議報告。
+    (非同步) 專門針對「菜色」生成研發與調整建議報告 (Tab 2 專用)。
     """
     if not client: return "（未設定 API Key）", None
 
@@ -345,3 +324,54 @@ async def generate_menu_report(food_stats: dict, client: AsyncOpenAI, model="gpt
         return resp.choices[0].message.content, resp.usage
     except Exception as e:
         return f"生成菜色報告失敗: {e}", None
+
+# ==========================================
+# 3. 同步輔助函式 (Sync Helper for ThreadPool)
+# ==========================================
+
+def sync_gpt_image_classify_3cls(face_img, client):
+    """
+    同步版本的 GPT-4o 圖片情緒辨識 (專供 ThreadPoolExecutor 使用)
+    輸入: OpenCV 影像 (BGR)
+    輸出: '喜歡', '中性', '討厭' 其中之一
+    """
+    if face_img is None or face_img.size == 0:
+        return "中性"
+
+    try:
+        # 1. 影像編碼 (BGR -> JPEG -> Base64)
+        _, buffer = cv2.imencode('.jpg', face_img)
+        img_base64 = base64.b64encode(buffer).decode('utf-8')
+
+        # 2. 呼叫 GPT-4o (同步模式，不加 await)
+        response = client.chat.completions.create(
+            model="gpt-4o",
+            messages=[
+                {
+                    "role": "system", 
+                    "content": "You are an emotion classifier. Classify the face image into exactly one of these 3 classes: '喜歡', '中性', '討厭'. Return ONLY the class name."
+                },
+                {
+                    "role": "user", 
+                    "content": [
+                        {"type": "text", "text": "Classify this face."},
+                        {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{img_base64}"}}
+                    ]
+                }
+            ],
+            max_tokens=10,
+            temperature=0.3
+        )
+        
+        result = response.choices[0].message.content.strip()
+        
+        # 簡單防呆清洗
+        for valid in ["喜歡", "中性", "討厭"]:
+            if valid in result:
+                return valid
+                
+        return "中性" # 預設值
+
+    except Exception as e:
+        print(f"LLM Sync Error: {e}")
+        return "中性"

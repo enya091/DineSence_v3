@@ -14,6 +14,7 @@ import plotly.express as px
 from io import BytesIO
 from docx import Document
 
+
 EVIDENCE_DIR = "session_evidence"
 
 
@@ -644,7 +645,6 @@ def _render_tab_global(client, db_manager, df_sessions, t):
             )
             st.plotly_chart(fig, use_container_width=True)
 
-# 檔案：ui/dashboard_view.py (請新增此函式)
 
 def _render_tab_overview(client, df_logs, num_groups, groups_df, df_sessions, stats, date_range_strs, t):
     """
@@ -804,7 +804,312 @@ def _render_tab_overview(client, df_logs, num_groups, groups_df, df_sessions, st
                 type="secondary"
             )
 
-# 檔案：ui/dashboard_view.py (請新增此函式)
+# AI Agent
+def _render_tab_ai_agent(client, db_manager, df_sessions, df_logs, stats, t):
+    """
+    [NEW] AI Agent 智慧對話 Tab (最終完整版)
+    包含：UX 優化、RAG 資料注入、Text-to-SQL 雙階段推理、資料庫欄位自動適配
+    """
+    import pandas as pd
+    import asyncio
+    import os
+    import sqlite3
+    import re
+
+    # --- 1. CSS 美化注入 (霓虹暗黑風格) ---
+    st.markdown("""
+    <style>
+        /* 聊天視窗容器調整 */
+        .stChatContainer { padding-right: 10px; }
+        
+        /* 1. 對話外框容器美化 */
+        [data-testid="stVerticalBlockBorderWrapper"] > div {
+            border-radius: 15px !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            background-color: #1e293b !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+        }
+
+        /* 2. 對話氣泡美化 */
+        .stChatMessage {
+            background-color: transparent !important;
+            padding: 1rem !important;
+            border-radius: 12px !important;
+            margin-bottom: 0.5rem !important;
+        }
+
+        /* AI (Assistant) - 亮青色風格 */
+        .stChatMessage[data-testid="stChatMessage"]:nth-child(odd) {
+            background-color: rgba(6, 182, 212, 0.1) !important;
+            border-left: 3px solid #06b6d4 !important;
+        }
+
+        /* User - 淡灰色風格 */
+        .stChatMessage[data-testid="stChatMessage"]:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.05) !important;
+        }
+
+        /* 3. 文字與頭像優化 */
+        .stChatMessage p {
+            font-size: 1.1rem !important;
+            line-height: 1.6 !important;
+            color: #e2e8f0 !important;
+        }
+        .stChatMessage .stImage {
+            width: 45px !important;
+            height: 45px !important;
+            border-radius: 50% !important;
+            border: 2px solid #334155 !important;
+        }
+        
+        /* 4. 按鈕優化 */
+        button[kind="secondary"] {
+            border: 1px solid rgba(255,255,255,0.2) !important;
+            background-color: transparent !important;
+            color: #94a3b8 !important;
+        }
+        button[kind="secondary"]:hover {
+            border-color: #ef4444 !important;
+            color: #ef4444 !important;
+            background-color: rgba(239, 68, 68, 0.1) !important;
+        }
+        div.stButton > button {
+            border-radius: 20px !important;
+            transition: all 0.3s ease;
+        }
+    </style>
+    """, unsafe_allow_html=True)
+
+    # --- 2. 初始化 Session State ---
+    if "messages" not in st.session_state:
+        st.session_state.messages = [
+            {"role": "assistant", "content": "👋 嗨！我是水母哥，您的智能小助手。有什麼問題都可以問我呦！"}
+        ]
+
+    # --- 3. 準備 Context (AI 的大腦) ---
+    
+    # (A) 計算熱門時段
+    peak_hour = "資料不足"
+    if not df_logs.empty:
+        try:
+            df_logs['hour'] = pd.to_datetime(df_logs['timestamp']).dt.hour
+            peak_hour = f"{df_logs['hour'].mode()[0]}點"
+        except: pass
+
+    # (B) 撈取食物數據
+    food_summary_list = []
+    if not df_sessions.empty:
+        # 限制前 50 筆以優化效能
+        for _, row in df_sessions.head(50).iterrows():
+            sid = row.get('session_id_raw')
+            if not sid: continue
+            
+            s_time = row['timestamp'].strftime('%H:%M')
+            try:
+                evidence_df = db_manager.get_event_evidence(sid, "strong_emotion_plate")
+                if not evidence_df.empty:
+                    for _, e_row in evidence_df.iterrows():
+                        if e_row['human_corrected'] == 0: continue
+                        f_label = e_row['food_label']
+                        if f_label:
+                            food_summary_list.append(f"[{s_time}] {f_label}")
+            except: pass
+
+    food_context_str = ", ".join(food_summary_list) if food_summary_list else "目前區間內無 AI 辨識到的餐點紀錄"
+    if len(food_context_str) > 2000: food_context_str = food_context_str[:2000] + "..."
+
+    # (C) Text-to-SQL Schema 定義 (告訴 AI 資料庫長怎樣)
+    # 特別說明 waste_count 是我們稍後會手動計算生成的
+    db_schema_context = """
+    [資料庫權限]
+    你有權限存取一個 SQLite 資料庫，包含以下兩張表：
+    
+    1. 表名: sessions (每一筆代表一組客人的用餐紀錄)
+       - Columns: 
+         - nod_count (點頭次數/int)
+         - shake_count (搖頭次數/int)
+         - waste_count (剩食數量/int) (若大於0代表有浪費)
+         - timestamp (時間/datetime)
+    
+    2. 表名: logs (每一筆代表攝影機抓到的人流紀錄)
+       - Columns: 
+         - people_count (人數/int)
+         - timestamp (時間/datetime)
+
+    [指令]
+    如果使用者問統計類問題(如平均、總和、特定時段)，請生成 SQL 查詢。
+    格式要求：只輸出 `SQL_QUERY: SELECT ...`，不要包含其他文字。
+    """
+
+    summary_context = f"""
+    [營運摘要]
+    - 場次: {len(df_sessions)}
+    - 滿意: {stats['total_nods']} | 不滿: {stats['total_shakes']}
+    - 剩食數: {stats['waste_count']}
+    - 高峰: {peak_hour}
+    [餐點紀錄] {food_context_str}
+    """
+
+    # --- 4. 介面主體：卡片式容器 ---
+    with st.container(border=True):
+        
+        # Header
+        col_header_L, col_header_R = st.columns([5, 1])
+        with col_header_L:
+            c_img, c_txt = st.columns([1, 6])
+            with c_img:
+                img_path = "assets/avatar.png"
+                if os.path.exists(img_path): st.image(img_path, width=150)
+                else: st.markdown("🐙")
+            with c_txt:
+                st.markdown("### 💬 智能小助手 - 水母哥")
+                st.caption("24小時 AI 營運顧問 | 支援 SQL 數據查詢")
+        with col_header_R:
+            if st.button("🗑 清空", type="secondary", use_container_width=True):
+                st.session_state.messages = [{"role": "assistant", "content": "紀錄已清空！"}]
+                st.rerun()
+
+        st.divider()
+
+        # 對話捲動區塊
+        chat_container = st.container(height=400)
+        with chat_container:
+            for msg in st.session_state.messages:
+                role = msg["role"]
+                # 設定頭像
+                if role == "user":
+                    avatar = "👤"
+                else:
+                    avatar = "assets/avatar.png" if os.path.exists("assets/avatar.png") else "🤖"
+                
+                with st.chat_message(role, avatar=avatar):
+                    st.markdown(msg["content"])
+                    # # 如果有 SQL 執行結果，顯示在摺疊選單中
+                    # if "sql_query" in msg:
+                    #     st.caption(f"🔍 SQL: `{msg['sql_query']}`")
+                    #     with st.expander("查看原始數據"):
+                    #         st.code(msg.get('sql_result', 'No Data'))
+
+    # --- 5. 快捷按鈕區 ---
+    st.write("💡 **快捷提問：**")
+    b1, b2, b3, b4 = st.columns(4)
+    user_click_prompt = None
+
+    if b1.button("📊 今日總結"): user_click_prompt = "請總結今天的營運狀況與關鍵數據。"
+    if b2.button("🍔 熱門餐點"): user_click_prompt = "大家都點了什麼？有沒有特定時段偏好？"
+    if b3.button("📈 平均滿意度"): user_click_prompt = "平均每組客人的滿意點頭次數是多少？"
+    if b4.button("🗑️ 剩食分析"): user_click_prompt = "總共有多少場次出現剩食？比例是多少？"
+
+    # --- 6. 輸入處理邏輯 ---
+    chat_input_text = st.chat_input("輸入問題...")
+    final_prompt = user_click_prompt if user_click_prompt else chat_input_text
+
+    if final_prompt:
+        # 1. 顯示使用者訊息
+        st.session_state.messages.append({"role": "user", "content": final_prompt})
+        with chat_container:
+            with st.chat_message("user", avatar="👤"):
+                st.markdown(final_prompt)
+
+        # 2. AI 處理 (Text-to-SQL Magic)
+        if not client:
+            st.error("⚠️ 未設定 OpenAI API Key")
+        else:
+            with chat_container:
+                avatar = "assets/avatar.png" if os.path.exists("assets/avatar.png") else "🤖"
+                with st.chat_message("assistant", avatar=avatar):
+                    status_placeholder = st.empty()
+                    
+                    with st.spinner("水母哥正在思考..."):
+                        async def run_analysis():
+                            # System Prompt 包含 Schema
+                            full_prompt = f"""
+                            你是一位專業餐廳顧問。
+                            {summary_context}
+                            {db_schema_context}
+                            請根據使用者問題判斷：
+                            1. 若是閒聊或摘要，直接回答。
+                            2. 若需計算(平均/加總/過濾)，請生成 `SQL_QUERY: SELECT ...`。
+                            3.【注意】請直接說出結論或數字即可，完全不要提到「SQL」、「資料庫」或「查詢語句」等技術字眼。語氣要像是一位專業的店長在做匯報。
+                            """
+                            
+                            # A. 第一次請求
+                            resp = await client.chat.completions.create(
+                                model="gpt-4o",
+                                messages=[{"role": "system", "content": full_prompt}] + st.session_state.messages,
+                                temperature=0
+                            )
+                            first_reply = resp.choices[0].message.content
+                            
+                            # B. 檢查 SQL
+                            sql_match = re.search(r"SQL_QUERY:\s*(SELECT.*)", first_reply, re.IGNORECASE | re.DOTALL)
+                            
+                            if sql_match:
+                                sql_query = sql_match.group(1).strip().replace("```sql", "").replace("```", "").strip()
+                                status_placeholder.markdown(f"⚡️ 水母哥正在查詢資料庫...")
+                                
+                                # C. 建立內存資料庫 (解決 leftover_data 問題)
+                                try:
+                                    conn = sqlite3.connect(':memory:')
+                                    
+                                    # --- 處理 Sessions 表 ---
+                                    clean_sessions = df_sessions.copy()
+                                    # [關鍵邏輯] 將 leftover_data (JSON字串) 轉為 waste_count (Int)
+                                    if 'leftover_data' in clean_sessions.columns:
+                                        clean_sessions['waste_count'] = clean_sessions['leftover_data'].apply(
+                                            lambda x: 1 if x and isinstance(x, str) and len(x) > 4 else 0
+                                        )
+                                    else:
+                                        clean_sessions['waste_count'] = 0
+                                    
+                                    # 補齊欄位
+                                    for col in ['nod_count', 'shake_count', 'timestamp']:
+                                        if col not in clean_sessions.columns: clean_sessions[col] = 0
+                                    
+                                    clean_sessions = clean_sessions[['nod_count', 'shake_count', 'waste_count', 'timestamp']].fillna(0)
+                                    clean_sessions.to_sql('sessions', conn, index=False)
+                                    
+                                    # --- 處理 Logs 表 ---
+                                    clean_logs = df_logs.copy()
+                                    clean_logs = clean_logs[['people_count', 'timestamp']].fillna(0)
+                                    clean_logs.to_sql('logs', conn, index=False)
+                                    
+                                    # 執行 SQL
+                                    query_df = pd.read_sql_query(sql_query, conn)
+                                    result_str = query_df.to_string()
+                                    conn.close()
+                                    
+                                    # D. 第二次請求 (解釋結果)
+                                    final_prompt_sys = f"SQL查詢: {sql_query}\n結果:\n{result_str}\n請根據結果用繁體中文回答。"
+                                    resp2 = await client.chat.completions.create(
+                                        model="gpt-4o",
+                                        messages=[{"role": "system", "content": final_prompt_sys}],
+                                        temperature=0.7
+                                    )
+                                    return resp2.choices[0].message.content, sql_query, result_str
+                                    
+                                except Exception as e:
+                                    return f"查詢失敗: {e}", None, None
+                            else:
+                                return first_reply, None, None
+
+                        reply_text, executed_sql, sql_result = asyncio.run(run_analysis())
+                        
+                        status_placeholder.empty()
+                        
+                        # 儲存與顯示
+                        msg_data = {"role": "assistant", "content": reply_text}
+                        if executed_sql:
+                            msg_data["sql_query"] = executed_sql
+                            msg_data["sql_result"] = sql_result
+                        
+                        st.session_state.messages.append(msg_data)
+                        
+                        # 顯示這次的回答 (因為 rerun 會清掉畫面，所以存檔後直接 rerun 讓迴圈顯示)
+                        # 但為了避免瞬間空白，我們可以選擇這裡不 render，直接交給 rerun
+        
+        # 3. 強制重整 (確保流暢)
+        st.rerun()
 
 def _render_tab_evidence(db, df_sessions, t):
     """
@@ -960,15 +1265,15 @@ def display(client, db_manager, t=None):
 
     # Tab 4: AI Agent (目前留空)
     with tab3:
-        st.empty() # 佔位符
-        with st.container(border=True):
-            st.info("🚧 **AI Agent 智慧洞察功能開發中**")
-            st.markdown("""
-            未來功能預告：
-            - 🗣️ **自然語言對話**：直接問系統「上週五中午生意好嗎？」
-            - 🤖 **自動化任務**：設定條件自動發送 Line 通知。
-            - 🧠 **深度關聯分析**：分析天氣、促銷活動與情緒的關聯。
-            """)
+        _render_tab_ai_agent(client, db, df_sessions, df_logs, stats, t)
+        # with st.container(border=True):
+        #     st.info("🚧 **AI Agent 智慧洞察功能開發中**")
+        #     st.markdown("""
+        #     未來功能預告：
+        #     - 🗣️ **自然語言對話**：直接問系統「上週五中午生意好嗎？」
+        #     - 🤖 **自動化任務**：設定條件自動發送 Line 通知。
+        #     - 🧠 **深度關聯分析**：分析天氣、促銷活動與情緒的關聯。
+        #     """)
 
         # Tab 2: 影像佐證紀錄 (獨立出來的照片區)
     with tab4:

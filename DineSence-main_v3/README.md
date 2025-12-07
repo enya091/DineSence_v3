@@ -68,7 +68,7 @@ pip install -r requirements.txt
 打開 .env 檔案，並貼上以下內容，然後將等號後面的值換成你自己的資訊：
 
 # 你的 OpenAI API 金鑰 (必要)
-OPENAI_API_KEY="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+OPENAI_API_KEY="xx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
 
 重要：.env 檔案已經被設定在 .gitignore 中，所以它絕對不會被上傳到 GitHub，你的金鑰是安全的。

@@ -72,7 +72,7 @@ OPENAI_API_KEY="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 Bash
 
 streamlit run app.py
-系統將自動開啟瀏覽器，預設登入帳號密碼為：admin / admin123。
+系統將自動開啟瀏覽器，預設登入帳號密碼為：admin / 1234。
 
 📁 專案結構
 DineSence/

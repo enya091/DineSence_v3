@@ -1,92 +1,90 @@
-🍽️ DineSence 顧客分析平台
-DineSence 是一個基於電腦視覺 (CV) 與大型語言模型 (LLM) 的智慧餐廳顧客行為分析平台。它能夠透過即時鏡頭或離線影片，分析顧客在用餐過程中的情緒、行為與滿意度，並提供數據化的洞察報告與儀表板，幫助餐廳業者優化服務品質與提升顧客體驗。
+🍽️ DineSence 智慧餐飲顧客分析平台
+AI 驅動的餐飲決策核心，讀懂顧客無聲的反饋
 
-✨ 主要功能
-🟢 即時鏡頭分析：
+📖 專案簡介 (Introduction)
+DineSence 是一個結合 電腦視覺 (Computer Vision) 與 大型語言模型 (LLM) 的智慧餐飲營運輔助系統。
 
-情緒辨識：透過 OpenAI GPT-4o Vision API 分析顧客的臉部表情（喜歡/中性/討厭）。
+現行餐飲業缺乏即時且客觀的顧客反饋，傳統問卷容易有偏差，銷售數據也無法完全反映顧客喜好。DineSence 透過非接觸式的鏡頭分析，捕捉顧客用餐時的微表情、肢體動作以及餐盤剩食狀況，並將這些非結構化數據轉化為可執行的商業洞察，協助餐廳優化菜單與服務流程。
 
-行為偵測：偵測顧客的點頭動作（表示滿意）與餐盤剩餘量。
+✨ 核心功能 (Key Features)
+🟢 1. 多模態即時分析 (Real-time Multimodal Analysis)
+系統能透過店內鏡頭即時捕捉並分析顧客狀態：
 
-高效能架構：採用多執行緒架構，將影像顯示與耗時分析徹底分離，確保 UI 介面如絲般順滑。
+情緒辨識：利用 GPT-4o Vision API 精準判斷顧客情緒光譜（喜歡 / 中性 / 討厭）。
 
-🎞️ 影片離線分析：上傳用餐過程的影片，系統會自動進行抽樣分析，並由 LLM 生成一份詳細的質化摘要報告。
+行為解讀：結合 MediaPipe Pose 偵測顧客的肢體語言（如：點頭肯定、搖頭否定）。
 
-📈 數據儀表板：提供一個模擬的月度營運儀表板，展示新來客數、滿意度、營收分析等關鍵商業智慧 (BI) 指標。
+非干擾式體驗：無需顧客填寫問卷，大幅降低干擾並獲得最真實的反應。
 
-📜 Session 歷史紀錄：每一次的即時分析都會被記錄下來，包含詳細的數據（持續時間、情緒分佈、Token 用量）與 AI 生成的摘要快照，方便日後追蹤與覆盤。
+🍛 2. 智慧剩食洞察 (Smart Leftover Analysis)
+餐盤偵測：運用 YOLOv8 物件偵測技術，自動識別餐盤區域。
 
-🔐 安全登入：應用程式包含一個登入頁面，確保數據的安全性。
+滿意度量化：透過 OpenCV 演算法計算剩食比例，推估顧客對該菜色的真實滿意度（吃光 = 高滿意度）。
 
-🚀 開始使用
-請依照以下步驟在你的本地端電腦上設定並執行此專案。
+📊 3. 商業智慧儀表板 (Business Intelligence Dashboard)
+AI 營運報告：整合所有數據，由 LLM 自動生成每日/每週營運建議報告。
 
-1. 前置需求
-Python 3.8 或更高版本
+視覺化數據：提供來客數、情緒趨勢、熱門/地雷菜色分析圖表。
 
-Git
+🛠️ 技術架構 (Tech Stack)
+前端框架: Streamlit
 
-2. 安裝步驟
-第一步：複製 (Clone) 專案
+核心 AI 模型:
 
-先開好一個空資料夾 在裡面開啟終端機 (Terminal)，並執行以下指令：
+LLM & VLM: OpenAI GPT-4o / GPT-4o-mini (情緒分析、報告生成)
 
-git clone [你的專案 Git Repo URL]
-cd [專案資料夾名稱]
+Object Detection: YOLOv8 (食物與餐盤偵測)
 
-第二步：建立並啟用虛擬環境 (Virtual Environment)
+Pose Estimation: Google MediaPipe (臉部網格與骨架追蹤)
 
-在專案資料夾中，建立一個獨立的 Python 虛擬環境。這是一個非常重要的好習慣，可以避免套件版本衝突。
+影像處理: OpenCV, PIL
 
-# 建立一個名為 venv 的虛擬環境 (執行以下指令)
+資料管理: SQLite (輕量級資料庫)
+
+🚀 快速開始 (Quick Start)
+1. 環境設定
+本專案需要 Python 3.8 或更高版本。
+
+Bash
+
+# Clone 專案
+git clone [您的 Git Repo URL]
+cd DineSence-main_v3
+
+# 建立虛擬環境
 python -m venv venv
 
-接著，啟用這個虛擬環境：
-
-在 Windows 上:
-
+# 啟用虛擬環境 (Windows)
 .\venv\Scripts\activate
-
-在 macOS 或 Linux 上:
-
+# 啟用虛擬環境 (Mac/Linux)
 source venv/bin/activate
-
-啟用成功後，你的終端機提示字元前面會出現 (venv) 的字樣。
-
-第三步：安裝所有必要的套件
-
-專案所需的所有套件都記錄在 requirements.txt 檔案中。執行以下指令來一次性安裝它們：
+2. 安裝依賴
+Bash
 
 pip install -r requirements.txt
+3. 設定環境變數
+請在專案根目錄建立 .env 檔案，並填入您的 OpenAI API Key：
 
-第四步：設定環境變數 (.env)
+Code snippet
 
-為了保護你的 API 金鑰等敏感資訊，我們使用 .env 檔案來管理它們。
-
-在專案的根目錄下（與 app.py 同一層），手動建立一個名為 .env 的新檔案。
-
-打開 .env 檔案，並貼上以下內容，然後將等號後面的值換成你自己的資訊：
-
-# 你的 OpenAI API 金鑰 (必要)
-OPENAI_API_KEY="xx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-
-
-重要：.env 檔案已經被設定在 .gitignore 中，所以它絕對不會被上傳到 GitHub，你的金鑰是安全的。
-
-3. 執行應用程式
-恭喜，所有設定都完成了！在你的終端機中（請確保 (venv) 虛擬環境是啟用的），執行以下指令：
+OPENAI_API_KEY="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+4. 啟動系統
+Bash
 
 streamlit run app.py
+系統將自動開啟瀏覽器，預設登入帳號密碼為：admin / admin123。
 
-終端機將會顯示一個本地網址 (通常是 http://localhost:8501)。請將此網址複製到你的瀏覽器中打開。
+📁 專案結構
+DineSence/
+├── app.py                  # 程式進入點 (Streamlit Main App)
+├── config.py               # 全域設定檔
+├── services/               # 核心服務邏輯
+│   ├── vision_analysis.py  # CV 演算法 (YOLO, MediaPipe)
+│   ├── llm_handler.py      # LLM 介面 (OpenAI API)
+│   └── ...
+├── ui/                     # 介面模組 (Dashboard, Live View)
+└── ...
+📝 關於我們
+本專案由 資科四A (蔡加恩、楊沛潔、曾鈺涵、黃薇庭、洪文蕙) 開發，指導老師為 吳政隆教授。 我們致力於利用 AI 技術解決真實世界的商業難題。
 
-你會先看到應用程式的登入頁面。
-
-請使用你在 .env 檔案中設定的帳號密碼登入（預設是 admin / admin123）。
-
-登入成功後，你就可以開始使用 DineSence 平台的所有功能了！
-
-📝 額外說明
-模型下載：第一次執行即時分析或影片分析時，程式會自動從網路上下載 YOLOv8n 模型 (yolov8n.pt)。這只會發生在第一次，請耐心等待它完成。
-
-攝影機權限：第一次使用「即時鏡頭分析」功能時，你的瀏覽器或作業系統可能會跳出提示，詢問是否允許存取攝影機，請選擇「允許」。
+Disclaimer: 本系統目前僅供教育與研究用途。實際場域應用時，請確保符合當地隱私權法規。
